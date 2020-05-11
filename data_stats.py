@@ -10,7 +10,7 @@ from utils import MEAN, STD, get_data
 if __name__ == '__main__':
 
 	parser = argparse.ArgumentParser(description='Get data stats')
-	parser.add_argument('--path-to-data', type=str, default='./data/', metavar='Path', help='Path to scp files with features')
+	parser.add_argument('--data-path', type=str, default='./data/', metavar='Path', help='Path to scp files with features')
 	parser.add_argument('--batch-size', type=int, default=1000, metavar='N', help='Batch size')
 	parser.add_argument('--sample-size', type=int, default=10000, metavar='N', help='Sample size to estimate data stats')
 	parser.add_argument('--n-workers', type=int, default=4, metavar='N', help='Workers for data loading. Default is 4')
