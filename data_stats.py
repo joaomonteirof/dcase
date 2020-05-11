@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
 	mean, var, std = data.mean((0,2,3)), data.var((0,2,3)), data.std((0,2,3))
 
-	print('\n'+args.path_to_data+'\n')
+	print('\n'+args.data_path+'\n')
 	print('mean: {}'.format(mean))
 	print('var: {}'.format(var))
 	print('std: {}'.format(std))
