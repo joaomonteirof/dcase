@@ -32,7 +32,7 @@ class TrainLoop(object):
 		self.logger = logger
 		self.history = {'train_loss': [], 'train_loss_batch': []}
 		self.disc_label_smoothing = label_smoothing
-		self.best_er, self.best_cos_eer = np.inf
+		self.best_er = np.inf
 
 		if label_smoothing>0.0:
 			self.ce_criterion = LabelSmoothingLoss(label_smoothing, lbl_set_size=self.model.n_classes)
