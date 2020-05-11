@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.lib.stride_tricks import as_strided
 from sklearn import metrics
-
+import scipy.io as sio
 import torch
 import itertools
 import os
@@ -11,6 +11,12 @@ from time import sleep
 
 MEAN = [0.5058, 0.9338, 0.5593]
 STD = [0.3475, 0.1202, 0.3416]
+
+def get_data(path):
+	data = sio.loadmat(path)
+	data = data[sorted(data.keys())[-1]]
+
+	return data
 
 def adjust_learning_rate(optimizer, epoch, base_lr, n_epochs, lr_factor, min_lr=1e-8):
 	"""Sets the learning rate to the initial LR decayed by 10 every n_epochs epochs"""

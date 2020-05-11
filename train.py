@@ -12,7 +12,7 @@ from time import sleep
 import os
 import sys
 from optimizer import TransformerOptimizer
-from utils import MEAN, STD
+from utils import MEAN, STD, get_data
 
 def set_np_randomseed(worker_id):
 	np.random.seed(np.random.get_state()[1][0]+worker_id)
@@ -66,12 +66,12 @@ if args.cuda:
 mean = [0.5058, 0.9338, 0.5593]
 std = [0.3475, 0.1202, 0.3416]
 
-transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean=MEAN, std=STD)])
+transform = transforms.Compose([transforms.Normalize(mean=MEAN, std=STD)])
 
-trainset = datasets.ImageFolder(args.data_path, transform=transform)
+trainset = datasets.DatasetFolder(root=args.data_path, loader=get_data, transform=transform)
 train_loader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers, worker_init_fn=set_np_randomseed, pin_memory=True)
 
-validset = datasets.ImageFolder(args.valid_data_path, transform=transform)	
+validset = datasets.ImageFolder(root=args.valid_data_path, loader=get_data, transform=transform)
 valid_loader = torch.utils.data.DataLoader(validset, batch_size=args.valid_batch_size, shuffle=True, num_workers=args.n_workers, pin_memory=True)
 
 args.nclasses = len(trainset.classes)

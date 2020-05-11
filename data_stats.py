@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 import os
 from tqdm import tqdm
-from utils import MEAN, STD
+from utils import MEAN, STD, get_data
 
 if __name__ == '__main__':
 
@@ -16,11 +16,8 @@ if __name__ == '__main__':
 	parser.add_argument('--n-workers', type=int, default=4, metavar='N', help='Workers for data loading. Default is 4')
 	args = parser.parse_args()
 
-	mean = [0.5058, 0.9338, 0.5593]
-	std = [0.3475, 0.1202, 0.3416]
-
-	transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean=MEAN, std=STD)])
-	dataset = datasets.ImageFolder(args.path_to_data, transform=transform)
+	transform = transforms.Compose([transforms.Normalize(mean=MEAN, std=STD)])
+	dataset = datasets.DatasetFolder(root=args.data_path, loader=get_data, transform=transform)
 	dataloader = torch.utils.data.DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers)
 
 	data = []
