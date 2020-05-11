@@ -116,7 +116,7 @@ if args.verbose >0:
 		args_dict = parse_args_for_log(args)
 	print('\n')
 	for key in args_dict:
-		print('{}}: {}'.format(key, args_dict[key]))
+		print('{}: {}'.format(key, args_dict[key]))
 	print('\n')
 
 trainer.train(n_epochs=args.epochs, save_every=args.save_every, eval_every=args.eval_every)
