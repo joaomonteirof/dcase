@@ -12,6 +12,14 @@ from time import sleep
 MEAN = -32.3358
 STD = 17.0759
 
+def parse_args_for_log(args):
+	args_dict = dict(vars(args))
+	for arg_key in args_dict:
+		if args_dict[arg_key] is None:
+			args_dict[arg_key] = 'None'
+
+	return args_dict
+
 def get_data(path):
 	data = sio.loadmat(path)
 	data = data[sorted(data.keys())[0]]

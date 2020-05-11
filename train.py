@@ -12,7 +12,7 @@ from time import sleep
 import os
 import sys
 from optimizer import TransformerOptimizer
-from utils import MEAN, STD, get_data
+from utils import MEAN, STD, get_data, parse_args_for_log
 
 def set_np_randomseed(worker_id):
 	np.random.seed(np.random.get_state()[1][0]+worker_id)
@@ -105,20 +105,18 @@ if args.logdir:
 	writer.add_hparams(hparam_dict=args_dict, metric_dict={'best_acc':0.0})
 else:
 	writer = None
+	args_dict = None
 
 optimizer = TransformerOptimizer(optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.l2, nesterov=True), lr=args.lr, warmup_steps=args.warmup)
 
 trainer = TrainLoop(model, optimizer, train_loader, valid_loader, max_gnorm=args.max_gnorm, label_smoothing=args.smoothing, verbose=args.verbose, save_cp=(not args.no_cp), checkpoint_path=args.checkpoint_path, checkpoint_epoch=args.checkpoint_epoch, cuda=args.cuda, logger=writer)
 
 if args.verbose >0:
-	print('\nCuda Mode is: {}'.format(args.cuda))
-	print('Selected model: {}'.format(args.model))
-	print('Batch size: {}'.format(args.batch_size))
-	print('LR: {}'.format(args.lr))
-	print('Momentum: {}'.format(args.momentum))
-	print('l2: {}'.format(args.l2))
-	print('Label smoothing: {}'.format(args.smoothing))
-	print('Warmup iterations: {}'.format(args.warmup))
-	print('Max. grad norm: {}'.format(args.max_gnorm))
+	if args_dict is None:
+		args_dict = parse_args_for_log(args)
+	print('\n')
+	for key in args_dict:
+		print('key: {}'.format(args_dict[key]))
+	print('\n')
 
 trainer.train(n_epochs=args.epochs, save_every=args.save_every, eval_every=args.eval_every)
