@@ -79,13 +79,13 @@ class TrainLoop(object):
 							self.checkpointing()
 							self.save_epoch_cp = True
 
-				self.history['train_loss'].append(train_loss_epoch/(t+1))
+			self.history['train_loss'].append(train_loss_epoch/(t+1))
 
-				if self.verbose>0:
-					print(' ')
-					print('Total train loss: {:0.4f}'.format(self.history['train_loss'][-1]))
-					print('Current LR: {}'.format(self.optimizer.optimizer.param_groups[0]['lr']))
-					print(' ')
+			if self.verbose>0:
+				print(' ')
+				print('Total train loss: {:0.4f}'.format(self.history['train_loss'][-1]))
+				print('Current LR: {}'.format(self.optimizer.optimizer.param_groups[0]['lr']))
+				print(' ')
 
 			if self.save_cp and self.cur_epoch % save_every == 0 and not self.save_epoch_cp:
 					self.checkpointing()
