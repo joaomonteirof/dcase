@@ -63,9 +63,6 @@ args.cuda = True if not args.no_cuda and torch.cuda.is_available() else False
 if args.cuda:
 	torch.backends.cudnn.benchmark=True
 
-mean = [0.5058, 0.9338, 0.5593]
-std = [0.3475, 0.1202, 0.3416]
-
 transform = transforms.Compose([transforms.Normalize(mean=MEAN, std=STD)])
 
 trainset = datasets.DatasetFolder(root=args.data_path, loader=get_data, transform=transform)

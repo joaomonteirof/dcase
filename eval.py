@@ -9,7 +9,7 @@ import numpy as np
 import os
 import sys
 from tqdm import tqdm
-from utils import MEAN, STD
+from utils import MEAN, STD, get_data
 
 if __name__ == '__main__':
 
@@ -24,8 +24,8 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 	args.cuda = True if not args.no_cuda and torch.cuda.is_available() else False
 
-	transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean=MEAN, std=STD)])
-	testset = datasets.ImageFolder(args.data_path, transform=transform)
+	transform = transforms.Compose([transforms.Normalize(mean=MEAN, std=STD)])
+	dataset = datasets.DatasetFolder(root=args.data_path, loader=get_data, transform=transform)
 	test_loader = torch.utils.data.DataLoader(testset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
 
 	for key in testset.class_to_idx:
