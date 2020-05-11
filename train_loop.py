@@ -146,14 +146,14 @@ class TrainLoop(object):
 			pred = pred.t()
 			correct = pred.eq(y.view(1, -1).expand_as(pred))
 
-			correct = correct[:1].view(-1).float().sum(0, keepdim=True)
+			correct = correct[:1].view(-1).float().sum(0, keepdim=True).item()
 
 		return correct
 
 	def evaluate(self):
 
 		if self.verbose>0:
-			print('\nIteration - Epoch: {} - {}'.format(self.total_iters, self.cur_epoch))
+			print('\n\nIteration - Epoch: {} - {}'.format(self.total_iters, self.cur_epoch))
 
 		total_correct, total = 0, 0
 
@@ -175,7 +175,7 @@ class TrainLoop(object):
 
 		if self.verbose>0:
 			print(' ')
-			print('Current ER, best ER, and epoch - iteration: {:0.4f}, {:0.4f}, {}, {}'.format(self.history['ER'][-1], np.min(self.history['ER']), self.best_er_epoch, self.best_er_iteration))
+			print('Current ER, best ER, and epoch - iteration: {:0.4f}, {:0.4f}, {}, {} \n'.format(self.history['ER'][-1], np.min(self.history['ER']), self.best_er_epoch, self.best_er_iteration))
 
 	def checkpointing(self):
 
