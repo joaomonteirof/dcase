@@ -14,7 +14,8 @@ STD = [0.3475, 0.1202, 0.3416]
 
 def get_data(path):
 	data = sio.loadmat(path)
-	data = data[sorted(data.keys())[-1]]
+	data = data[sorted(data.keys())[0]]
+	data = torch.Tensor(data).float().unsqueeze(0).contiguous()
 
 	return data
 
