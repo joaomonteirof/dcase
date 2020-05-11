@@ -142,9 +142,9 @@ class TrainLoop(object):
 
 			out = self.model.forward(x)
 
-			_, pred = output.topk(1, 1, True, True)
+			_, pred = out.topk(1, 1, True, True)
 			pred = pred.t()
-			correct = pred.eq(target.view(1, -1).expand_as(pred))
+			correct = pred.eq(y.view(1, -1).expand_as(pred))
 
 			correct = correct[:1].view(-1).float().sum(0, keepdim=True)
 
