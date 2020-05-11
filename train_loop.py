@@ -63,7 +63,7 @@ class TrainLoop(object):
 			self.save_epoch_cp = False
 			train_loss_epoch=0.0
 			for t, batch in train_iter:
-				train_loss, ce_loss, bin_loss = self.train_step(batch)
+				train_loss = self.train_step(batch)
 				self.history['train_loss_batch'].append(train_loss)
 				train_loss_epoch+=train_loss
 
