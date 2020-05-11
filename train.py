@@ -65,10 +65,10 @@ if args.cuda:
 
 transform = transforms.Compose([transforms.Normalize(mean=MEAN, std=STD)])
 
-trainset = datasets.DatasetFolder(root=args.data_path, loader=get_data, transform=transform)
+trainset = datasets.DatasetFolder(root=args.data_path, loader=get_data, transform=transform, extensions=('mat'))
 train_loader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers, worker_init_fn=set_np_randomseed, pin_memory=True)
 
-validset = datasets.ImageFolder(root=args.valid_data_path, loader=get_data, transform=transform)
+validset = datasets.ImageFolder(root=args.valid_data_path, loader=get_data, transform=transform, extensions=('mat'))
 valid_loader = torch.utils.data.DataLoader(validset, batch_size=args.valid_batch_size, shuffle=True, num_workers=args.n_workers, pin_memory=True)
 
 args.nclasses = len(trainset.classes)

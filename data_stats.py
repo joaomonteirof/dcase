@@ -17,7 +17,7 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 
 	transform = transforms.Compose([transforms.Normalize(mean=MEAN, std=STD)])
-	dataset = datasets.DatasetFolder(root=args.data_path, loader=get_data, transform=transform)
+	dataset = datasets.DatasetFolder(root=args.data_path, loader=get_data, transform=transform, extensions=('mat'))
 	dataloader = torch.utils.data.DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers)
 
 	data = []

@@ -25,7 +25,7 @@ if __name__ == '__main__':
 	args.cuda = True if not args.no_cuda and torch.cuda.is_available() else False
 
 	transform = transforms.Compose([transforms.Normalize(mean=MEAN, std=STD)])
-	dataset = datasets.DatasetFolder(root=args.data_path, loader=get_data, transform=transform)
+	dataset = datasets.DatasetFolder(root=args.data_path, loader=get_data, transform=transform, extensions=('mat'))
 	test_loader = torch.utils.data.DataLoader(testset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
 
 	for key in testset.class_to_idx:
