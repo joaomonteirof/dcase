@@ -9,8 +9,8 @@ import sys
 import pickle
 from time import sleep
 
-MEAN = [0.5058, 0.9338, 0.5593]
-STD = [0.3475, 0.1202, 0.3416]
+MEAN = -32.3358
+STD = 17.0759
 
 def get_data(path):
 	data = sio.loadmat(path)
