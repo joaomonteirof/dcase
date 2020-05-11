@@ -56,7 +56,7 @@ class TrainLoop(object):
 			if self.verbose>0:
 				print(' ')
 				print('Epoch {}/{}'.format(self.cur_epoch, n_epochs))
-				train_iter = tqdm(enumerate(self.train_loader))
+				train_iter = tqdm(enumerate(self.train_loader), total=len(self.train_loader))
 			else:
 				train_iter = enumerate(self.train_loader)
 
