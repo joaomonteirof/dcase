@@ -160,7 +160,7 @@ class TrainLoop(object):
 		for t, batch in enumerate(self.valid_loader):
 			correct = self.valid(batch)
 			total_correct += correct
-			total += batch.size(0)
+			total += batch[0].size(0)
 
 		self.history['ER'].append(1.-total_correct/total)
 
