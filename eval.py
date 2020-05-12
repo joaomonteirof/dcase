@@ -29,6 +29,13 @@ if __name__ == '__main__':
 	test_loader = torch.utils.data.DataLoader(testset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
 
 	args.nclasses = len(testset.classes)
+
+	args_dict = parse_args_for_log(args)
+	print('\n')
+	for key in args_dict:
+		print('{}: {}'.format(key, args_dict[key]))
+	print('\n')
+
 	idx_to_class = {}
 
 	for key in testset.class_to_idx:
@@ -44,7 +51,7 @@ if __name__ == '__main__':
 		model = densenet.DenseNet121(n_classes=args.nclasses)
 	
 	try:
-		model.load_state_dict(ckpt['model_state'], strict=True)
+		print(model.load_state_dict(ckpt['model_state'], strict=True))
 	except RuntimeError as err:
 		print("Runtime Error: {0}".format(err))
 	except:
@@ -76,8 +83,8 @@ if __name__ == '__main__':
 			predictions.append(pred)
 			labels.append(labels)
 
-		predictions = torch.cat(predictions, 0).numpy()
-		labels = torch.cat(labels, 0).numpy()
+		predictions = torch.cat(predictions, 0).cpu().numpy()
+		labels = torch.cat(labels, 0).cpu().numpy()
 
 
 	cm_matrix = confusion_matrix(labels, predictions)
