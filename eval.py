@@ -29,6 +29,7 @@ if __name__ == '__main__':
 	test_loader = torch.utils.data.DataLoader(testset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
 
 	args.nclasses = len(testset.classes)
+	idx_to_class = {}
 
 	for key in testset.class_to_idx:
 		idx_to_class[str(testset.class_to_idx)] = key
