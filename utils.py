@@ -8,6 +8,7 @@ import os
 import sys
 import pickle
 from time import sleep
+import random
 
 MEAN = -34.5485
 STD = 17.5655
