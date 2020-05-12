@@ -25,8 +25,10 @@ if __name__ == '__main__':
 	args.cuda = True if not args.no_cuda and torch.cuda.is_available() else False
 
 	transform = transforms.Compose([transforms.Normalize(mean=MEAN, std=STD)])
-	dataset = datasets.DatasetFolder(root=args.data_path, loader=get_data, transform=transform, extensions=('mat'))
+	testset = datasets.DatasetFolder(root=args.data_path, loader=get_data, transform=transform, extensions=('mat'))
 	test_loader = torch.utils.data.DataLoader(testset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
+
+	args.nclasses = len(testset.classes)
 
 	for key in testset.class_to_idx:
 		idx_to_class[str(testset.class_to_idx)] = key
@@ -34,11 +36,11 @@ if __name__ == '__main__':
 	ckpt = torch.load(args.cp_path, map_location = lambda storage, loc: storage)
 
 	if args.model == 'vgg':
-		model = vgg.VGG('VGG16', nh=n_hidden, n_h=hidden_size, dropout_prob=dropout_prob, sm_type=softmax)
+		model = vgg.VGG('VGG19', n_classes=args.nclasses)
 	elif args.model == 'resnet':
-		model = resnet.ResNet18(nh=n_hidden, n_h=hidden_size, dropout_prob=dropout_prob, sm_type=softmax)
+		model = resnet.ResNet50(n_classes=args.nclasses)
 	elif args.model == 'densenet':
-		model = densenet.densenet_cifar(nh=n_hidden, n_h=hidden_size, dropout_prob=dropout_prob, sm_type=softmax)
+		model = densenet.DenseNet121(n_classes=args.nclasses)
 	
 	try:
 		model.load_state_dict(ckpt['model_state'], strict=True)
