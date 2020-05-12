@@ -94,13 +94,16 @@ def freq_mask(spec, F=30, num_masks=1, replace_with_zero=False, dim=1):
 	:param int dim: 1 or 2 indicating to which axis the mask corresponds
 	"""
 
+	assert dim==1 or dim==2, 'Only 1 or 2 are valid values for dim!'
+
 	with torch.no_grad():
 
 		cloned = spec.clone()
+		num_bins = cloned.shape[dim]
 
 		for i in range(0, num_masks):
 			f = random.randrange(0, F)
-			f_zero = random.randrange(0, 1 - f)
+			f_zero = random.randrange(0, num_bins - f)
 
 			# avoids randrange error if values are equal and range is empty
 			if f_zero == f_zero + f:

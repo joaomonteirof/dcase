@@ -36,6 +36,7 @@ parser.add_argument('--pretrained-path', type=str, default=None, metavar='Path',
 parser.add_argument('--save-every', type=int, default=1, metavar='N', help='how many epochs to wait before saving checkpoints. Default is 1')
 parser.add_argument('--eval-every', type=int, default=1000, metavar='N', help='how many iterations to wait before evaluatiing models. Default is 1000')
 parser.add_argument('--no-cuda', action='store_true', default=False, help='Disables GPU use')
+parser.add_argument('--no-aug', action='store_true', default=False, help='Disables data augmentation')
 parser.add_argument('--no-cp', action='store_true', default=False, help='Disables checkpointing')
 parser.add_argument('--verbose', type=int, default=1, metavar='N', help='Verbose is activated if > 0')
 parser.add_argument('--logdir', type=str, default=None, metavar='Path', help='Path for checkpointing')
@@ -45,7 +46,7 @@ args.cuda = True if not args.no_cuda and torch.cuda.is_available() else False
 if args.cuda:
 	torch.backends.cudnn.benchmark=True
 
-transform = transforms.Compose([transforms.Normalize(mean=MEAN, std=STD), freq_mask])
+transform = transforms.Compose([transforms.Normalize(mean=MEAN, std=STD), freq_mask]) if not args.no_aug else transforms.Normalize(mean=MEAN, std=STD)
 
 trainset = datasets.DatasetFolder(root=args.data_path, loader=get_data, transform=transform, extensions=('mat'))
 train_loader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers, worker_init_fn=set_np_randomseed, pin_memory=True)
