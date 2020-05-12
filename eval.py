@@ -40,6 +40,7 @@ if __name__ == '__main__':
 
 	for key in testset.class_to_idx:
 		idx_to_class[str(testset.class_to_idx)] = key
+	print(idx_to_class, '\n')
 
 	ckpt = torch.load(args.cp_path, map_location = lambda storage, loc: storage)
 
