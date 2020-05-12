@@ -52,6 +52,7 @@ if __name__ == '__main__':
 	
 	try:
 		print(model.load_state_dict(ckpt['model_state'], strict=True))
+		print('\n')
 	except RuntimeError as err:
 		print("Runtime Error: {0}".format(err))
 	except:
@@ -81,7 +82,7 @@ if __name__ == '__main__':
 			pred = F.softmax(out, dim=1).max(1)[1].long()
 
 			predictions.append(pred)
-			labels.append(labels)
+			labels.append(y)
 
 		predictions = torch.cat(predictions, 0).cpu().numpy()
 		labels = torch.cat(labels, 0).cpu().numpy()
