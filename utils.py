@@ -9,8 +9,8 @@ import sys
 import pickle
 from time import sleep
 
-MEAN = -32.3358
-STD = 17.0759
+MEAN = -34.5485
+STD = 17.5655
 
 def parse_args_for_log(args):
 	args_dict = dict(vars(args))
