@@ -9,7 +9,7 @@ import numpy as np
 import os
 import sys
 from tqdm import tqdm
-from utils import MEAN, STD, get_data
+from utils import MEAN, STD, get_data, parse_args_for_log, get_freer_gpu, set_np_randomseed
 
 if __name__ == '__main__':
 
