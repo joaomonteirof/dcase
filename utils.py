@@ -38,6 +38,19 @@ def get_freer_gpu(trials=10):
 	print('NO GPU AVAILABLE!!!')
 	exit(1)
 
+def augment(example):
+
+	with torch.no_grad():
+
+		if random.rand()>0.5:
+			example = freq_mask(example, dim=1)
+		if random.rand()>0.5:
+			example = freq_mask(example, dim=2)
+		if random.rand()>0.5:
+			example += torch.randn_like(example)*random.choice([1e-2, 1e-3, 1e-4, 1e-5])
+
+	return example
+
 def get_data(path):
 	data = sio.loadmat(path)
 	data = data[sorted(data.keys())[0]]
@@ -67,117 +80,41 @@ def correct_topk(output, target, topk=(1,)):
 			res.append(correct_k)
 		return res
 
-def strided_app(a, L, S):
-	nrows = ( (len(a)-L) // S ) + 1
-	n = a.strides[0]
-	return as_strided(a, shape=(nrows, L), strides=(S*n,n))
+def freq_mask(spec, F=30, num_masks=1, replace_with_zero=False, dim=1):
+	"""Frequency masking
 
-def get_classifier_config_from_cp(ckpt):
-	keys=ckpt['model_state'].keys()
-	classifier_params=[]
-	out_proj_params=[]
-	for x in keys:
-		if 'classifier' in x:
-			classifier_params.append(x)
-		elif 'out_proj' in x:
-			out_proj_params.append(x)
-	
-	n_hidden, hidden_size, softmax = max(len(classifier_params)//2 - 1, 1), ckpt['model_state']['classifier.0.weight'].size(0), 'am_softmax' if len(out_proj_params)==1 else 'softmax'
+	adapted from https://espnet.github.io/espnet/_modules/espnet/utils/spec_augment.html
 
-	if softmax == 'am_softmax':
-		n_classes = ckpt['model_state']['out_proj.w'].size(1)
-	elif softmax == 'softmax':
-		n_classes = ckpt['model_state']['out_proj.w.weight'].size(0)
+	:param torch.Tensor spec: input tensor with shape (T, dim)
+	:param int F: maximum width of each mask
+	:param int num_masks: number of masks
+	:param bool replace_with_zero: if True, masked parts will be filled with 0,
+		if False, filled with mean
+	:param int dim: 1 or 2 indicating to which axis the mask corresponds
+	"""
 
-	return n_hidden, hidden_size, softmax, n_classes
+	with torch.no_grad():
 
-def create_trials_labels(labels_list, max_n_trials=1e8):
+		cloned = spec.clone()
 
-	enroll_ex, test_ex, labels = [], [], []
+		for i in range(0, num_masks):
+			f = random.randrange(0, F)
+			f_zero = random.randrange(0, 1 - f)
 
-	for i, prod_exs in enumerate(itertools.combinations(list(range(len(labels_list))), 2)):
+			# avoids randrange error if values are equal and range is empty
+			if f_zero == f_zero + f:
+				return cloned
 
-		enroll_ex.append(prod_exs[0])
-		test_ex.append(prod_exs[1])
+			mask_end = random.randrange(f_zero, f_zero + f)
+			if replace_with_zero:
+				if dim==1:
+					cloned[:, f_zero:mask_end, :] = 0.0
+				elif dim==2:
+					cloned[:, :, f_zero:mask_end] = 0.0
+			else:
+				if dim==1:
+					cloned[:, f_zero:mask_end, :] = cloned.mean()
+				elif dim==2:
+					cloned[:, :, f_zero:mask_end] = cloned.mean()
 
-		if labels_list[prod_exs[0]]==labels_list[prod_exs[1]]:
-			labels.append(1)
-		else:
-			labels.append(0)
-
-		if i>=max_n_trials: break
-
-	return enroll_ex, test_ex, labels
-
-def set_np_randomseed(worker_id):
-	np.random.seed(np.random.get_state()[1][0]+worker_id)
-
-def get_freer_gpu(trials=10):
-	sleep(5)
-	for j in range(trials):
-		os.system('nvidia-smi -q -d Memory |grep -A4 GPU|grep Free >tmp')
-		memory_available = [int(x.split()[2]) for x in open('tmp', 'r').readlines()]
-		dev_ = torch.device('cuda:'+str(np.argmax(memory_available)))
-		try:
-			a = torch.rand(1).cuda(dev_)
-			return dev_
-		except:
-			pass
-
-	print('NO GPU AVAILABLE!!!')
-	exit(1)
-
-def compute_eer(y, y_score):
-	fpr, tpr, thresholds = metrics.roc_curve(y, y_score, pos_label=1)
-	fnr = 1 - tpr
-
-	t = np.nanargmin(np.abs(fnr-fpr))
-	eer_low, eer_high = min(fnr[t],fpr[t]), max(fnr[t],fpr[t])
-	eer = (eer_low+eer_high)*0.5
-
-	return eer
-
-def compute_metrics(y, y_score):
-	fpr, tpr, thresholds = metrics.roc_curve(y, y_score, pos_label=1)
-	fnr = 1 - tpr
-	t = np.nanargmin(np.abs(fnr-fpr))
-
-	eer_threshold = thresholds[t]
-
-	eer_low, eer_high = min(fnr[t],fpr[t]), max(fnr[t],fpr[t])
-	eer = (eer_low+eer_high)*0.5
-
-	auc = metrics.auc(fpr, tpr)
-
-	avg_precision = metrics.average_precision_score(y, y_score)
-
-	pred = np.asarray([1 if score > eer_threshold else 0 for score in y_score])
-	acc = metrics.accuracy_score(y ,pred)
-
-	return eer, auc, avg_precision, acc, eer_threshold
-
-def read_trials(path):
-	with open(path, 'r') as file:
-		utt_labels = file.readlines()
-
-	enroll_utt_list, test_utt_list, labels_list = [], [], []
-
-	for line in utt_labels:
-		enroll_utt, test_utt, label = line.split(' ')
-		enroll_utt_list.append(enroll_utt)
-		test_utt_list.append(test_utt)
-		labels_list.append(1 if label=='target\n' else 0)
-
-	return enroll_utt_list, test_utt_list, labels_list
-
-def read_spk2utt(path):
-	with open(path, 'r') as file:
-		rows = file.readlines()
-
-	spk2utt_dict = {}
-
-	for row in rows:
-		spk_utts = row.replace('\n','').split(' ')
-		spk2utt_dict[spk_utts[0]] = spk_utts[1:]
-
-	return spk2utt_dict
+	return cloned

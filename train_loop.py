@@ -111,9 +111,6 @@ class TrainLoop(object):
 		x = x.to(self.device, non_blocking=True)
 		y = y.to(self.device, non_blocking=True)
 
-		if random.random() > 0.5:
-			x += torch.randn_like(x)*random.choice([1e-4, 1e-5])
-
 		out = self.model.forward(x)
 
 		loss = self.ce_criterion(out, y)
