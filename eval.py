@@ -90,8 +90,10 @@ if __name__ == '__main__':
 
 
 	cm_matrix = confusion_matrix(labels, predictions)
-	accuracies = cm_matrix.diagonal()/cm_matrix.sum(axis=1)
+	accuracies = 100.0*cm_matrix.diagonal()/cm_matrix.sum(axis=1)
 
 	for i, acc in enumerate(accuracies):
 		print('\n')
-		print(idx_to_class[str(i)], acc)
+		print(idx_to_class[str(i)], ': {:0.4f}%'.format(acc))
+
+	print('\n')
