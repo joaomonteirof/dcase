@@ -4,7 +4,7 @@ import numpy as np
 import random
 import os
 from tqdm import tqdm
-from models.losses import LabelSmoothingLoss
+from losses import LabelSmoothingLoss
 
 class TrainLoop(object):
 
