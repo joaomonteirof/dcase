@@ -81,7 +81,7 @@ def correct_topk(output, target, topk=(1,)):
 			res.append(correct_k)
 		return res
 
-def freq_mask(spec, F=30, num_masks=1, replace_with_zero=False, dim=1):
+def freq_mask(spec, F=100, num_masks=1, replace_with_zero=False, dim=1):
 	"""Frequency masking
 
 	adapted from https://espnet.github.io/espnet/_modules/espnet/utils/spec_augment.html
