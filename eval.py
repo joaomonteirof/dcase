@@ -60,6 +60,8 @@ if __name__ == '__main__':
 		print("Unexpected error:", sys.exc_info()[0])
 		raise
 
+	print('\n\nNumber of parameters: {}\n'.format(sum(p.numel() for p in model.parameters())))
+
 	if args.cuda:
 		device = get_freer_gpu()
 		model = model.to(device)

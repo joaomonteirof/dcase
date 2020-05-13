@@ -76,6 +76,7 @@ if args.pretrained_path:
 
 if args.verbose >0:
 	print(model)
+	print('\n\nNumber of parameters: {}\n'.format(sum(p.numel() for p in model.parameters())))
 
 if args.cuda:
 	device = get_freer_gpu()
