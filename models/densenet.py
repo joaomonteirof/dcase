@@ -5,9 +5,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from models.losses import AMSoftmax, Softmax
-
-
 class Bottleneck(nn.Module):
 	def __init__(self, in_planes, growth_rate):
 		super(Bottleneck, self).__init__()
