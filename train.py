@@ -12,7 +12,7 @@ from time import sleep
 import os
 import sys
 from optimizer import TransformerOptimizer
-from utils import MEAN, STD, get_data, parse_args_for_log, get_freer_gpu, set_np_randomseed, freq_mask
+from utils import MEAN, STD, get_data, parse_args_for_log, get_freer_gpu, set_np_randomseed, augment
 
 # Training settings
 parser = argparse.ArgumentParser(description='Acoustic scene classification from modulation spectra')
@@ -46,7 +46,7 @@ args.cuda = True if not args.no_cuda and torch.cuda.is_available() else False
 if args.cuda:
 	torch.backends.cudnn.benchmark=True
 
-transform = transforms.Compose([transforms.Normalize(mean=MEAN, std=STD), freq_mask]) if not args.no_aug else transforms.Normalize(mean=MEAN, std=STD)
+transform = transforms.Compose([transforms.Normalize(mean=MEAN, std=STD), augment]) if not args.no_aug else transforms.Normalize(mean=MEAN, std=STD)
 
 trainset = datasets.DatasetFolder(root=args.data_path, loader=get_data, transform=transform, extensions=('mat'))
 train_loader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers, worker_init_fn=set_np_randomseed, pin_memory=True)
