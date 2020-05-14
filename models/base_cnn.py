@@ -12,14 +12,13 @@ class CNN(nn.Module):
 		self.n_classes = n_classes
 
 		self.features = self._make_layers(CFG)
-		self.avgpool = nn.AdaptiveAvgPool2d((7, 7))
-		self.classifier = nn.Sequential(nn.Linear(6272, 128),
+		self.classifier = nn.Sequential(nn.Linear(2048, 128),
 										nn.Dropout(0.2),
 										nn.ReLU(),
 										nn.Linear(128, self.n_classes) )
 
 	def forward(self, x):
-		x = self.avgpool(self.features(x))
+		x = self.features(x)
 		x = x.view(x.size(0), -1)
 		x = self.classifier(x)
 
@@ -30,11 +29,11 @@ class CNN(nn.Module):
 		in_channels = 1
 		for x in cfg:
 			if x == 'M':
-				layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
+				layers += [nn.MaxPool2d(kernel_size=5, stride=2)]
 			else:
-				layers += [nn.Conv2d(in_channels, x, kernel_size=5, padding=1),
+				layers += [nn.Conv2d(in_channels, x, kernel_size=7, stride=2, padding=1),
 						   nn.BatchNorm2d(x),
 						   nn.ReLU(inplace=True)]
 				in_channels = x
-		layers += [nn.AvgPool2d(kernel_size=1, stride=1)]
+		layers += [nn.AvgPool2d(kernel_size=2, stride=1)]
 		return nn.Sequential(*layers)
