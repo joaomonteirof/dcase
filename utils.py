@@ -43,11 +43,11 @@ def augment(example):
 
 	with torch.no_grad():
 
-		if random.rand()>0.5:
+		if random.random()>0.5:
 			example = freq_mask(example, dim=1)
-		if random.rand()>0.5:
+		if random.random()>0.5:
 			example = freq_mask(example, dim=2)
-		if random.rand()>0.5:
+		if random.random()>0.5:
 			example += torch.randn_like(example)*random.choice([1e-2, 1e-3, 1e-4, 1e-5])
 
 	return example
@@ -56,6 +56,7 @@ def get_data(path):
 	data = sio.loadmat(path)
 	data = data[sorted(data.keys())[0]]
 	data = torch.Tensor(data).float().unsqueeze(0).contiguous()
+	data = augment(data)
 
 	return data
 
