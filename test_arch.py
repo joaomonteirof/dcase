@@ -17,9 +17,9 @@ args = parser.parse_args()
 if args.model == 'cnn':
 	model = base_cnn.CNN(n_classes=args.nclasses)
 elif args.model == 'vgg':
-	model = vgg.VGG('VGG16', n_classes=args.nclasses)
+	model = vgg.VGG('VGG11', n_classes=args.nclasses)
 elif args.model == 'resnet':
-	model = resnet.ResNet18(n_classes=args.nclasses)
+	model = resnet.ResNet12(n_classes=args.nclasses)
 elif args.model == 'densenet':
 	model = densenet.DenseNet121(n_classes=args.nclasses)
 

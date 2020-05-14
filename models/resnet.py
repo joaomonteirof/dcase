@@ -201,6 +201,9 @@ class ResNet(nn.Module):
 
 		return x
 
+def ResNet12(n_classes=1000):
+	return ResNet(BasicBlock, [2,1,1,1], num_classes=n_classes)
+
 def ResNet18(n_classes=1000):
 	return ResNet(BasicBlock, [2,2,2,2], num_classes=n_classes)
 
