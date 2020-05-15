@@ -91,6 +91,8 @@ class TrainLoop(object):
 			if self.save_cp and self.cur_epoch % save_every == 0 and not self.save_epoch_cp:
 					self.checkpointing()
 
+			self.scheduler.step(self.history['ER'][-1])
+
 		if self.verbose>0:
 			print('Training done!')
 
@@ -174,8 +176,6 @@ class TrainLoop(object):
 		if self.verbose>0:
 			print(' ')
 			print('Current ER, best ER, and epoch - iteration: {:0.4f}, {:0.4f}, {}, {} \n'.format(self.history['ER'][-1], np.min(self.history['ER']), self.best_er_epoch, self.best_er_iteration))
-
-		self.scheduler.step(self.history['ER'][-1])
 
 	def checkpointing(self):
 
