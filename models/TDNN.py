@@ -46,7 +46,7 @@ class TDNN(nn.Module):
 
 	def forward(self, x):
 
-		x = x[:,:,self.init_coef:,:].squeeze(1)
+		x = x[:,:,self.init_coef:,:].squeeze(1).transpose(-1,-2)
 
 		x = self.model(x)
 		x = self.pooling(x)
