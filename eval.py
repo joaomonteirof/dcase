@@ -3,7 +3,7 @@ import argparse
 import torch
 import torch.nn.functional as F
 from torchvision import datasets, transforms
-from models import vgg, resnet, densenet, base_cnn
+from models import vgg, resnet, densenet, base_cnn, TDNN
 from sklearn.metrics import confusion_matrix
 import numpy as np
 import os

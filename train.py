@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 from train_loop import TrainLoop
 import torch.optim as optim
 from torchvision import datasets, transforms
-from models import vgg, resnet, densenet, base_cnn
+from models import vgg, resnet, densenet, base_cnn, TDNN
 import numpy as np
 from time import sleep
 import os
