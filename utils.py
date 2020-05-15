@@ -56,6 +56,7 @@ def get_data(path):
 	data = sio.loadmat(path)
 	data = data[sorted(data.keys())[0]]
 	data = torch.Tensor(data).float().unsqueeze(0).contiguous()
+	data = (data-data.mean())/(data.std()+1e-7)
 
 	return data
 

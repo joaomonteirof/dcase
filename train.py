@@ -31,7 +31,7 @@ parser.add_argument('--data-path', type=str, default='./data_train', metavar='Pa
 parser.add_argument('--valid-data-path', type=str, default='./data_val', metavar='Path', help='Path to data')
 parser.add_argument('--seed', type=int, default=42, metavar='S', help='random seed (default: 42)')
 parser.add_argument('--n-workers', type=int, default=4, metavar='N', help='Workers for data loading. Default is 4')
-parser.add_argument('--model', choices=['cnn', 'vgg', 'resnet', 'densenet'], default='resnet')
+parser.add_argument('--model', choices=['cnn', 'vgg', 'resnet', 'densenet', 'tdnn'], default='resnet')
 parser.add_argument('--pretrained-path', type=str, default=None, metavar='Path', help='Path to trained model. Discards outpu layer')
 parser.add_argument('--save-every', type=int, default=1, metavar='N', help='how many epochs to wait before saving checkpoints. Default is 1')
 parser.add_argument('--eval-every', type=int, default=1000, metavar='N', help='how many iterations to wait before evaluatiing models. Default is 1000')
@@ -46,7 +46,7 @@ args.cuda = True if not args.no_cuda and torch.cuda.is_available() else False
 if args.cuda:
 	torch.backends.cudnn.benchmark=True
 
-transform = transforms.Compose([transforms.Normalize(mean=MEAN, std=STD), augment]) if not args.no_aug else transforms.Normalize(mean=MEAN, std=STD)
+transform = None if not args.no_aug else augment
 
 trainset = datasets.DatasetFolder(root=args.data_path, loader=get_data, transform=transform, extensions=('mat'))
 train_loader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers, worker_init_fn=set_np_randomseed, pin_memory=True)
@@ -71,6 +71,8 @@ elif args.model == 'resnet':
 	model = resnet.ResNet12(n_classes=args.nclasses)
 elif args.model == 'densenet':
 	model = densenet.DenseNet121(n_classes=args.nclasses)
+elif args.model == 'tdnn':
+	model = TDNN.TDNN(n_classes=args.nclasses)
 
 if args.pretrained_path:
 	print(model.load_state_dict(ckpt['model_state'], strict=False))

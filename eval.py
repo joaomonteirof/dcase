@@ -18,14 +18,13 @@ if __name__ == '__main__':
 	parser.add_argument('--cp-path', type=str, default=None, metavar='Path', help='Path for checkpointing')
 	parser.add_argument('--data-path', type=str, default='./data/', metavar='Path', help='Path to data')
 	parser.add_argument('--batch-size', type=int, default=100, metavar='N', help='input batch size for testing (default: 100)')
-	parser.add_argument('--model', choices=['cnn', 'vgg', 'resnet', 'densenet'], default='resnet')
+	parser.add_argument('--model', choices=['cnn', 'vgg', 'resnet', 'densenet', 'tdnn'], default='resnet')
 	parser.add_argument('--no-cuda', action='store_true', default=False, help='Disables GPU use')
 	parser.add_argument('--workers', type=int, default=4, metavar='N', help='Data load workers (default: 4)')
 	args = parser.parse_args()
 	args.cuda = True if not args.no_cuda and torch.cuda.is_available() else False
 
-	transform = transforms.Compose([transforms.Normalize(mean=MEAN, std=STD)])
-	testset = datasets.DatasetFolder(root=args.data_path, loader=get_data, transform=transform, extensions=('mat'))
+	testset = datasets.DatasetFolder(root=args.data_path, loader=get_data, extensions=('mat'))
 	test_loader = torch.utils.data.DataLoader(testset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
 
 	args.nclasses = len(testset.classes)
@@ -52,6 +51,8 @@ if __name__ == '__main__':
 		model = resnet.ResNet12(n_classes=args.nclasses)
 	elif args.model == 'densenet':
 		model = densenet.DenseNet121(n_classes=args.nclasses)
+	elif args.model == 'tdnn':
+		model = TDNN.TDNN(n_classes=args.nclasses)
 	
 	try:
 		print(model.load_state_dict(ckpt['model_state'], strict=True))
