@@ -85,15 +85,13 @@ def augment_spec(example):
 		if random.random()>0.5:
 			example = freq_mask(example, F=200, dim=2)
 		if random.random()>0.5:
-			example += torch.randn_like(example)*random.choice([1e-2, 1e-3, 1e-4, 1e-5])
+			example += torch.randn_like(example)*random.choice([1e-1, 1e-2, 1e-3, 1e-4])
 
 	return example
 
 def normalize(example):
 
-	print(type(example), example.shape)
-
-	mean = convolve2d(example, np.ones([1, 100]), mode='same')/100.
+	mean = example.mean(-1, keepdims=True) #convolve2d(example, np.ones([1, 100]), mode='same')/100.
 	example -= mean
 
 	return example
@@ -105,7 +103,7 @@ def get_data(path, max_nb_frames=500):
 	else:
 		data = load_audio(path)
 
-	data = torchaudio.compliance.kaldi.fbank(torch.from_numpy(data).unsqueeze(0), frame_length=40, frame_shift=20, num_mel_bins=40, sample_frequency=44100, high_freq=22050, low_freq=0, use_log_fbank=True).numpy()
+	data = torchaudio.compliance.kaldi.fbank(torch.from_numpy(data).unsqueeze(0), frame_length=40, frame_shift=20, num_mel_bins=40, sample_frequency=44100, high_freq=22050, low_freq=0, use_log_fbank=True).numpy().T
 
 	if data.shape[-1]>max_nb_frames:
 			ridx = np.random.randint(0, data.shape[-1]-max_nb_frames)
@@ -196,4 +194,4 @@ if __name__ == '__main__':
 	for i in range(20):
 		testing_data = get_data(args.file_path)
 		print(type(testing_data))
-		print(testing_data.shape)
+		print(testing_data.shape, testing_data.max(), testing_data.min())
