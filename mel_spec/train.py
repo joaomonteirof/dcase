@@ -8,19 +8,17 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from models import vgg, resnet, densenet, base_cnn, TDNN
 import numpy as np
-from time import sleep
 import os
 import sys
-from utils import MEAN, STD, get_data, parse_args_for_log, get_freer_gpu, set_np_randomseed, augment
+from utils import get_data, parse_args_for_log, get_freer_gpu, set_np_randomseed
 
 # Training settings
 parser = argparse.ArgumentParser(description='Acoustic scene classification from modulation spectra')
 parser.add_argument('--batch-size', type=int, default=64, metavar='N', help='input batch size for training (default: 64)')
 parser.add_argument('--valid-batch-size', type=int, default=16, metavar='N', help='input batch size for testing (default: 256)')
 parser.add_argument('--epochs', type=int, default=500, metavar='N', help='number of epochs to train (default: 500)')
-parser.add_argument('--lr', type=float, default=0.0003, metavar='LR', help='learning rate (default: 0.0003)')
-parser.add_argument('--beta1', type=float, default=0.9, metavar='beta1', help='Adam beta 1 (default: 0.9)')
-parser.add_argument('--beta2', type=float, default=0.999, metavar='beta2', help='Adam beta 2 (default: 0.99)')
+parser.add_argument('--lr', type=float, default=0.001, metavar='LR', help='learning rate (default: 0.001)')
+parser.add_argument('--momentum', type=float, default=0.9, metavar='m', help='Momentum paprameter (default: 0.9)')
 parser.add_argument('--patience', type=int, default=30, metavar='N', help='number of epochs to wait whith no improvement prior to reducing lr')
 parser.add_argument('--l2', type=float, default=1e-4, metavar='lambda', help='L2 wheight decay coefficient (default: 0.0005)')
 parser.add_argument('--smoothing', type=float, default=0.2, metavar='l', help='Label smoothing (default: 0.2)')
@@ -36,7 +34,6 @@ parser.add_argument('--pretrained-path', type=str, default=None, metavar='Path',
 parser.add_argument('--save-every', type=int, default=1, metavar='N', help='how many epochs to wait before saving checkpoints. Default is 1')
 parser.add_argument('--eval-every', type=int, default=1000, metavar='N', help='how many iterations to wait before evaluatiing models. Default is 1000')
 parser.add_argument('--no-cuda', action='store_true', default=False, help='Disables GPU use')
-parser.add_argument('--no-aug', action='store_true', default=False, help='Disables data augmentation')
 parser.add_argument('--no-cp', action='store_true', default=False, help='Disables checkpointing')
 parser.add_argument('--verbose', type=int, default=1, metavar='N', help='Verbose is activated if > 0')
 parser.add_argument('--logdir', type=str, default=None, metavar='Path', help='Path for checkpointing')
@@ -46,12 +43,10 @@ args.cuda = True if not args.no_cuda and torch.cuda.is_available() else False
 if args.cuda:
 	torch.backends.cudnn.benchmark=True
 
-transform = None if not args.no_aug else augment
-
-trainset = datasets.DatasetFolder(root=args.data_path, loader=get_data, transform=transform, extensions=('mat'))
+trainset = datasets.DatasetFolder(root=args.data_path, loader=get_data, extensions=('wav'))
 train_loader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers, worker_init_fn=set_np_randomseed, pin_memory=True)
 
-validset = datasets.DatasetFolder(root=args.valid_data_path, loader=get_data, transform=transform, extensions=('mat'))
+validset = datasets.DatasetFolder(root=args.valid_data_path, loader=get_data, extensions=('wav'))
 valid_loader = torch.utils.data.DataLoader(validset, batch_size=args.valid_batch_size, shuffle=True, num_workers=args.n_workers, pin_memory=True)
 
 args.nclasses = len(trainset.classes)
@@ -95,7 +90,7 @@ else:
 	writer = None
 	args_dict = None
 
-optimizer = optim.Adam(model.parameters(), lr=args.lr, betas=(args.beta1, args.beta2))
+optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.l2, nesterov=True)
 
 trainer = TrainLoop(model, optimizer, train_loader, valid_loader, max_gnorm=args.max_gnorm, label_smoothing=args.smoothing, verbose=args.verbose, save_cp=(not args.no_cp), checkpoint_path=args.checkpoint_path, checkpoint_epoch=args.checkpoint_epoch, patience=args.patience, cuda=args.cuda, logger=writer)
 

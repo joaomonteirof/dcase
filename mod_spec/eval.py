@@ -68,7 +68,7 @@ if __name__ == '__main__':
 	if args.cuda:
 		device = get_freer_gpu()
 		model = model.to(device)
-	else
+	else:
 		device=torch.device('cpu')
 
 	model.eval()
