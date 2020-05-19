@@ -12,22 +12,20 @@ if __name__ == '__main__':
 
 	wav_list = glob.glob(args.wav_data+'/**/*.wav', recursive = True)
 
-	train_mat_files = pathlib.Path(os.path.join(args.wav_data, '/train')).mkdir(parents=True, exist_ok=True)
-	test_mat_files = pathlib.Path(os.path.join(args.wav_data, '/test')).mkdir(parents=True, exist_ok=True)
+	pathlib.Path(os.path.join(args.wav_data, '/train')).mkdir(parents=True, exist_ok=True)
+	pathlib.Path(os.path.join(args.wav_data, '/test')).mkdir(parents=True, exist_ok=True)
 
-	train_file_list = glob.glob(os.path.join(args.split_data, '/train')+'/**/*.wav', recursive = True)
-	test_file_list = glob.glob(os.path.join(args.split_data, '/test')+'/**/*.wav', recursive = True)
-
-	idx_train, idx_test = idx[:n_train], idx[n_train:]
+	train_mat_files = glob.glob(os.path.join(args.split_data, '/train')+'/**/*.mat', recursive = True)
+	test_mat_files = glob.glob(os.path.join(args.split_data, '/test')+'/**/*.mat', recursive = True)
 
 	for ref_file in train_mat_files:
 		class_id = ref_file.split('/')[-2]
 		current_file = os.path.join(args.wav_data, class_id, os.path.basename(ref_file).split('.')[0]) + '.wav'
-		renamed_file = os.path.join(args.wav_data, class_id, '/train/', os.path.basename(ref_file).split('.')[0]) + '.wav'
+		renamed_file = os.path.join(args.wav_data, '/train/', class_id, os.path.basename(ref_file).split('.')[0]) + '.wav'
 		copyfile(current_file, current_file)
 
 	for ref_file in test_mat_files:
 		class_id = ref_file.split('/')[-2]
 		current_file = os.path.join(args.wav_data, class_id, os.path.basename(ref_file).split('.')[0]) + '.wav'
-		renamed_file = os.path.join(args.wav_data, class_id, '/test/', os.path.basename(ref_file).split('.')[0]) + '.wav'
+		renamed_file = os.path.join(args.wav_data, '/test/', class_id, os.path.basename(ref_file).split('.')[0]) + '.wav'
 		copyfile(current_file, current_file)
