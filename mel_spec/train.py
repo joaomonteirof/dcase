@@ -10,7 +10,7 @@ from models import vgg, resnet, densenet, base_cnn, TDNN
 import numpy as np
 import os
 import sys
-from utils import get_data, parse_args_for_log, get_freer_gpu, set_np_randomseed
+from utils import get_data, get_data_augment, parse_args_for_log, get_freer_gpu, set_np_randomseed
 
 # Training settings
 parser = argparse.ArgumentParser(description='Acoustic scene classification from modulation spectra')
@@ -33,6 +33,7 @@ parser.add_argument('--model', choices=['cnn', 'vgg', 'resnet', 'densenet', 'tdn
 parser.add_argument('--pretrained-path', type=str, default=None, metavar='Path', help='Path to trained model. Discards outpu layer')
 parser.add_argument('--save-every', type=int, default=1, metavar='N', help='how many epochs to wait before saving checkpoints. Default is 1')
 parser.add_argument('--eval-every', type=int, default=1000, metavar='N', help='how many iterations to wait before evaluatiing models. Default is 1000')
+parser.add_argument('--no-aug', action='store_true', default=False, help='Disables data augmentation')
 parser.add_argument('--no-cuda', action='store_true', default=False, help='Disables GPU use')
 parser.add_argument('--no-cp', action='store_true', default=False, help='Disables checkpointing')
 parser.add_argument('--verbose', type=int, default=1, metavar='N', help='Verbose is activated if > 0')
@@ -43,7 +44,7 @@ args.cuda = True if not args.no_cuda and torch.cuda.is_available() else False
 if args.cuda:
 	torch.backends.cudnn.benchmark=True
 
-trainset = datasets.DatasetFolder(root=args.data_path, loader=get_data, extensions=('wav'))
+trainset = datasets.DatasetFolder(root=args.data_path, loader=get_data if args.no_aug else get_data_augment, extensions=('wav'))
 train_loader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers, worker_init_fn=set_np_randomseed, pin_memory=True)
 
 validset = datasets.DatasetFolder(root=args.valid_data_path, loader=get_data, extensions=('wav'))
