@@ -102,7 +102,7 @@ if __name__ == '__main__':
 		bin_labels = torch.cat(bin_labels, 0).cpu().numpy()
 		scores = torch.cat(scores, 0).cpu().numpy()
 
-	classes_list = sorted(list(np.unique(labels)))
+	classes_list = testset.classes
 	cm_matrix = confusion_matrix(labels, predictions, labels=classes_list)
 	accuracies = 100.0*cm_matrix.diagonal()/cm_matrix.sum(axis=1)
 
