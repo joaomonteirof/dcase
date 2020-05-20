@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 from torchvision import datasets, transforms
 from models import vgg, resnet, densenet, base_cnn, TDNN
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, log_loss
 import numpy as np
 import os
 import sys
@@ -75,6 +75,8 @@ if __name__ == '__main__':
 
 	predictions = []
 	labels = []
+	bin_labels = []
+	scores = []
 
 	with torch.no_grad():
 
@@ -84,23 +86,29 @@ if __name__ == '__main__':
 			x, y = batch
 
 			x = x.to(device)
+			y = y.to(device)
 
-			out = model.forward(x)
+			out = F.softmax(model.forward(x), dim=1)
 
-			pred = F.softmax(out, dim=1).max(1)[1].long()
+			pred = out.max(1)[1].long()
 
 			predictions.append(pred)
 			labels.append(y)
+			bin_labels.append(y.eq(pred).long())
+			scores.append(pred)
 
 		predictions = torch.cat(predictions, 0).cpu().numpy()
 		labels = torch.cat(labels, 0).cpu().numpy()
+		bin_labels = torch.cat(bin_labels, 0).cpu().numpy()
+		scores = torch.cat(scores, 0).cpu().numpy()
 
-
-	cm_matrix = confusion_matrix(labels, predictions)
+	classes_list = sorted(list(np.unique(labels)))
+	cm_matrix = confusion_matrix(labels, predictions, labels=classes_list)
 	accuracies = 100.0*cm_matrix.diagonal()/cm_matrix.sum(axis=1)
 
-	for i, acc in enumerate(accuracies):
-		print('\n')
-		print(idx_to_class[str(i)], ': {:0.4f}%'.format(acc))
+	for i, class_ in enumerate(classes_list):
+		print('Accuracies - Log loss:\n')
+		class_idx = np.where(labels == testset.class_to_idx[class_])
+		print(class_, ': {:0.4f}% - {:0.4f}%'.format(accuracies[i], log_loss(y_true=bin_labels[class_idx], y_pred=scores[class_idx, testset.class_to_idx[class_]])))
 
 	print('\n')
