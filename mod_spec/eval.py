@@ -75,7 +75,6 @@ if __name__ == '__main__':
 
 	predictions = []
 	labels = []
-	bin_labels = []
 	scores = []
 
 	with torch.no_grad():
@@ -99,7 +98,6 @@ if __name__ == '__main__':
 
 		predictions = torch.cat(predictions, 0).cpu().numpy()
 		labels = torch.cat(labels, 0).cpu().numpy()
-		bin_labels = torch.cat(bin_labels, 0).cpu().float()
 		scores = torch.cat(scores, 0).cpu()
 
 	classes_list = testset.classes
@@ -108,7 +106,6 @@ if __name__ == '__main__':
 
 	for i, class_ in enumerate(classes_list):
 		print('Accuracies - Log loss:\n')
-		class_idx = np.where(labels == testset.class_to_idx[class_])[0]
-		print(class_, ': {:0.4f}% - {:0.4f}'.format(accuracies[i], F.binary_cross_entropy(input=scores[class_idx, testset.class_to_idx[class_]], target=bin_labels[class_idx]).item()))
+		print(class_, ': {:0.4f}% - {:0.4f}'.format(accuracies[i], F.binary_cross_entropy(input=scores[:, testset.class_to_idx[class_]], target=torch.where(torch.from_numpy(labels) == testset.class_to_idx[class_], torch.ones(scores.size(0)), torch.zeros(scores.size(0)))).item()))
 
 	print('\n')
