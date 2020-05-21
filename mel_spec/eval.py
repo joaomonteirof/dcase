@@ -95,20 +95,20 @@ if __name__ == '__main__':
 			predictions.append(pred)
 			labels.append(y)
 			bin_labels.append(y.eq(pred).long())
-			scores.append(pred)
+			scores.append(out)
 
 		predictions = torch.cat(predictions, 0).cpu().numpy()
 		labels = torch.cat(labels, 0).cpu().numpy()
-		bin_labels = torch.cat(bin_labels, 0).cpu().numpy()
-		scores = torch.cat(scores, 0).cpu().numpy()
+		bin_labels = torch.cat(bin_labels, 0).cpu().float()
+		scores = torch.cat(scores, 0).cpu()
 
 	classes_list = testset.classes
-	cm_matrix = confusion_matrix(labels, predictions, labels=classes_list)
+	cm_matrix = confusion_matrix(labels, predictions)
 	accuracies = 100.0*cm_matrix.diagonal()/cm_matrix.sum(axis=1)
 
 	for i, class_ in enumerate(classes_list):
 		print('Accuracies - Log loss:\n')
-		class_idx = np.where(labels == testset.class_to_idx[class_])
-		print(class_, ': {:0.4f}% - {:0.4f}%'.format(accuracies[i], log_loss(y_true=bin_labels[class_idx], y_pred=scores[class_idx, testset.class_to_idx[class_]])))
+		class_idx = np.where(labels == testset.class_to_idx[class_])[0]
+		print(class_, ': {:0.4f}% - {:0.4f}'.format(accuracies[i], F.binary_cross_entropy(input=scores[class_idx, testset.class_to_idx[class_]], target=bin_labels[class_idx]).item()))
 
 	print('\n')
