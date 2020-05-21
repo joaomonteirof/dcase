@@ -103,8 +103,8 @@ if __name__ == '__main__':
 	cm_matrix = confusion_matrix(labels, predictions)
 	accuracies = 100.0*cm_matrix.diagonal()/cm_matrix.sum(axis=1)
 
+	print('\nAccuracies - Log loss:\n')
 	for i, class_ in enumerate(classes_list):
-		print('Accuracies - Log loss:\n')
 		print(class_, ': {:0.4f}% - {:0.4f}'.format(accuracies[i], F.binary_cross_entropy(input=scores[:, testset.class_to_idx[class_]], target=torch.where(torch.from_numpy(labels) == testset.class_to_idx[class_], torch.ones(scores.size(0)), torch.zeros(scores.size(0)))).item()))
 
 	print('\n')
