@@ -93,7 +93,6 @@ if __name__ == '__main__':
 
 			predictions.append(pred)
 			labels.append(y)
-			bin_labels.append(y.eq(pred).long())
 			scores.append(out)
 
 		predictions = torch.cat(predictions, 0).cpu().numpy()
