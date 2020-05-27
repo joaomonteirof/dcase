@@ -64,7 +64,7 @@ def augment_audio(path, sample_rate, tempo, gain):
 		y = load_audio(augmented_filename)
 		return y
 
-def load_randomly_augmented_audio(path, sample_rate=44100, tempo_range=(0.85, 1.15), gain_range=(-6, 8)):
+def load_randomly_augmented_audio(path, sample_rate=48000, tempo_range=(0.85, 1.15), gain_range=(-6, 8)):
 	"""
 	Picks tempo and gain uniformly, applies it to the utterance by using sox utility.
 	Returns the augmented utterance.
@@ -100,7 +100,7 @@ def get_data(path, max_nb_frames=500):
 
 	data = load_audio(path)
 
-	data = torchaudio.compliance.kaldi.fbank(torch.from_numpy(data).unsqueeze(0), frame_length=40, frame_shift=20, num_mel_bins=40, sample_frequency=44100, high_freq=22050, low_freq=0, use_log_fbank=True).numpy().T
+	data = torchaudio.compliance.kaldi.fbank(torch.from_numpy(data).unsqueeze(0), frame_length=40, frame_shift=20, num_mel_bins=40, sample_frequency=48000, high_freq=22050, low_freq=0, use_log_fbank=True).numpy().T
 
 	if data.shape[-1]>max_nb_frames:
 			ridx = np.random.randint(0, data.shape[-1]-max_nb_frames)
@@ -121,7 +121,7 @@ def get_data_augment(path, max_nb_frames=500):
 	else:
 		data = load_audio(path)
 
-	data = torchaudio.compliance.kaldi.fbank(torch.from_numpy(data).unsqueeze(0), frame_length=40, frame_shift=20, num_mel_bins=40, sample_frequency=44100, high_freq=22050, low_freq=0, use_log_fbank=True).numpy().T
+	data = torchaudio.compliance.kaldi.fbank(torch.from_numpy(data).unsqueeze(0), frame_length=40, frame_shift=20, num_mel_bins=40, sample_frequency=48000, high_freq=22050, low_freq=0, use_log_fbank=True).numpy().T
 
 	if data.shape[-1]>max_nb_frames:
 			ridx = np.random.randint(0, data.shape[-1]-max_nb_frames)
