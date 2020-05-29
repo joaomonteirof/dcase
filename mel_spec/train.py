@@ -54,11 +54,6 @@ args.nclasses = len(trainset.classes)
 
 print(args, '\n')
 
-if args.pretrained_path:
-	print('\nLoading pretrained model from: {}\n'.format(args.pretrained_path))
-	ckpt=torch.load(args.pretrained_path, map_location = lambda storage, loc: storage)
-	print('\nUsing pretrained config for discriminator. Ignoring args.')
-
 if args.model == 'cnn':
 	model = base_cnn.CNN(n_classes=args.nclasses)
 elif args.model == 'vgg':
@@ -71,8 +66,16 @@ elif args.model == 'tdnn':
 	model = TDNN.TDNN(n_classes=args.nclasses)
 
 if args.pretrained_path:
-	print(model.load_state_dict(ckpt['model_state'], strict=False))
-	print('\n')
+	try:
+		print('\nLoading pretrained model from: {}\n'.format(args.pretrained_path))
+		ckpt=torch.load(args.pretrained_path, map_location = lambda storage, loc: storage)
+		print(model.load_state_dict(ckpt['model_state'], strict=False))
+		print('\n')
+	except RuntimeError as err:
+		print("Runtime Error: {0}".format(err))
+	except:
+		print("Unexpected error:", sys.exc_info()[0])
+		raise
 
 if args.verbose >0:
 	print(model)
