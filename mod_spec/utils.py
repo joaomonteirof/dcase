@@ -10,8 +10,17 @@ import pickle
 from time import sleep
 import random
 
+## 16khz
 MEAN = -34.5485
 STD = 17.5655
+
+## 44.1khz
+#MEAN = -59.7172
+#STD = 27.9767
+
+## 22.5khz
+#MEAN = -46.2311
+#STD = 25.9895
 
 def parse_args_for_log(args):
 	args_dict = dict(vars(args))
@@ -56,7 +65,7 @@ def get_data(path):
 	data = sio.loadmat(path)
 	data = data[sorted(data.keys())[0]]
 	data = torch.Tensor(data).float().unsqueeze(0).contiguous()
-	data = (data-data.mean())/(data.std()+1e-7)
+	data = data-MEAN
 
 	return data
 

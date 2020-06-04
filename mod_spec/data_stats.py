@@ -20,7 +20,7 @@ if __name__ == '__main__':
 	dataloader = torch.utils.data.DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers)
 
 	data = []
-	data_iterator = tqdm(enumerate(dataloader), total=len(dataloader))
+	data_iterator = tqdm(enumerate(dataloader), total=args.sample_size//args.batch_size)
 
 	for i, batch in data_iterator:
 
