@@ -11,8 +11,8 @@ from time import sleep
 import random
 
 ## 16khz
-MEAN = -34.5485
-STD = 17.5655
+#MEAN = -34.5485
+#STD = 17.5655
 
 ## 44.1khz
 #MEAN = -59.7172
@@ -21,6 +21,10 @@ STD = 17.5655
 ## 22.5khz
 #MEAN = -46.2311
 #STD = 25.9895
+
+## Bineural
+MEAN = -38.4484
+STD = 18.3866
 
 def parse_args_for_log(args):
 	args_dict = dict(vars(args))
@@ -65,7 +69,7 @@ def get_data(path):
 	data = sio.loadmat(path)
 	data = data[sorted(data.keys())[0]]
 	data = torch.Tensor(data).float().unsqueeze(0).contiguous()
-	data = data-MEAN
+	data = (data-MEAN)/(STD+1e-8)
 
 	return data
 
