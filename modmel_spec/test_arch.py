@@ -17,9 +17,9 @@ args = parser.parse_args()
 if args.model == 'cnn':
 	model = base_cnn.CNN(n_classes=args.nclasses)
 elif args.model == 'vgg':
-	model = vgg.VGG('VGG16', n_classes=args.nclasses)
+	model = vgg.VGG('VGG11', n_classes=args.nclasses)
 elif args.model == 'resnet':
-	model = resnet.ResNet50(n_classes=args.nclasses)
+	model = resnet.ResNet18(n_classes=args.nclasses)
 elif args.model == 'densenet':
 	model = densenet.DenseNet121(n_classes=args.nclasses)
 elif args.model == 'tdnn':
@@ -28,7 +28,7 @@ elif args.model == 'tdnn':
 print('\n', model, '\n')
 print('\n\nNumber of parameters: {}\n'.format(sum(p.numel() for p in model.parameters())))
 
-batch = torch.rand(3, 1, 40, 129)
+batch = torch.rand(3, 1, 40, 256)
 
 out = model.forward(batch)
 
