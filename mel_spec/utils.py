@@ -138,6 +138,24 @@ def get_data_augment(path, max_nb_frames=500):
 
 	return data
 
+def get_data_evaluation(path, max_nb_frames=500):
+
+	data = load_audio(path)
+
+	data = torchaudio.compliance.kaldi.fbank(torch.from_numpy(data).unsqueeze(0), frame_length=40, frame_shift=20, num_mel_bins=40, sample_frequency=48000, high_freq=22050, low_freq=0, use_log_fbank=True).numpy().T
+
+	if data.shape[-1]>max_nb_frames:
+			ridx = np.random.randint(0, data.shape[-1]-max_nb_frames)
+			data = data[..., ridx:(ridx+max_nb_frames)]
+	elif data.shape[-1]<max_nb_frames:
+		mul = int(np.ceil(max_nb_frames/data.shape[-1]))
+		data = np.tile(data, (1, mul))
+		data = data[..., :max_nb_frames]
+
+	data = torch.from_numpy(normalize(data)).unsqueeze(0).float().contiguous()
+
+	return path, data
+
 def adjust_learning_rate(optimizer, epoch, base_lr, n_epochs, lr_factor, min_lr=1e-8):
 	"""Sets the learning rate to the initial LR decayed by 10 every n_epochs epochs"""
 	lr = max( base_lr * (lr_factor ** (epoch // n_epochs)), min_lr)
