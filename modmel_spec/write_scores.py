@@ -79,7 +79,7 @@ if __name__ == '__main__':
 		iterator = tqdm(testset, total=len(testset))
 		for batch in iterator:
 
-			filename, data, _ = batch[0]
+			filename, data = batch[0]
 
 			filename = filename.split('/')[-1]
 
@@ -92,7 +92,7 @@ if __name__ == '__main__':
 			for index in idx_to_class:
 				scores[idx_to_class[index]] = out[0, int(index)].item()
 
-			pred_idx = str(out.max(1)[1].long().tem())
+			pred_idx = str(out.max(1)[1].long().item())
 			pred = idx_to_class[pred_idx]
 
 			out_data.append([filename, pred, *[str(scores[class_name]) for class_name in auxset.classes]])

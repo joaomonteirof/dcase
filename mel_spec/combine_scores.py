@@ -21,9 +21,10 @@ if __name__ == '__main__':
 	parser.add_argument('--data-path', type=str, default='./data/', metavar='Path', help='Path to data')
 	parser.add_argument('--out-path', type=str, default='./out.csv', metavar='Path', help='Path to output scores')
 	args = parser.parse_args()
-	args.cuda = True if not args.no_cuda and torch.cuda.is_available() else False
 
 	file_list = glob.glob(args.data_path + '*.csv')
+
+	print(file_list)
 
 	assert len(file_list)>1, 'Not enough files found in the specified folder. At least two files with score should be available in the folder.'
 
@@ -57,7 +58,7 @@ if __name__ == '__main__':
 			for index in idx_to_class:
 				scores[idx_to_class[index]] = out[0, int(index)].item()
 
-			pred_idx = str(out.max(1)[1].long().tem())
+			pred_idx = str(out.max(1)[1].long().item())
 			pred = idx_to_class[pred_idx]
 
 			out_data.append([filename, pred, *[str(scores[class_name]) for class_name in classes]])
