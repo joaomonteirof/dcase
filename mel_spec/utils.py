@@ -14,6 +14,19 @@ from scipy.signal import convolve2d
 import argparse
 from tempfile import NamedTemporaryFile
 
+def parse_csv(path):
+	data_dict = {}
+	with open(path, 'r') as file:
+		data = file.readlines()[1:]
+
+	for line in data:
+		line = line.strip().split('\t')
+		filename = line[0]
+		scores = torch.Tensor([float(x) for x in line[2:]]).float().unsqueeze(0)
+		data_dict[filename] = scores
+
+	return data_dict
+
 def parse_args_for_log(args):
 	args_dict = dict(vars(args))
 	for arg_key in args_dict:
