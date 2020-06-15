@@ -51,6 +51,8 @@ if __name__ == '__main__':
 			for score_dict in score_files:
 				out += score_dict[filename]
 
+			out /= len(score_files)
+
 			out = F.softmax(out, dim=1)
 
 			scores = {}
