@@ -3,6 +3,7 @@ from numpy.lib.stride_tricks import as_strided
 from sklearn import metrics
 import scipy.io as sio
 import torch
+import torch.nn.functional as F
 import torchaudio
 import itertools
 import os
@@ -23,7 +24,7 @@ def parse_csv(path):
 		line = line.strip().split('\t')
 		filename = line[0]
 		scores = torch.Tensor([float(x) for x in line[2:]]).float().unsqueeze(0)
-		data_dict[filename] = scores
+		data_dict[filename] = F.softmax(scores, dim=1)
 
 	return data_dict
 

@@ -108,11 +108,11 @@ def compute_features(audio):
 
 	audio = torch.sqrt(torch.pow(audio[...,0], 2)+torch.pow(audio[...,1], 2)) ## get absolute value
 
-	audio = audio.mean(-1) ## averaging out the time dim
+	audio = audio.permute(2, 0, 1) ## averaging out the time dim
 
 	audio = normalize(audio) ## mean subtraction across the mod freq dim.
 
-	audio = audio.unsqueeze(0).float().contiguous()
+	audio = audio.float().contiguous()
 
 	return audio
 
@@ -227,6 +227,6 @@ if __name__ == '__main__':
 
 	import matplotlib.pyplot as plt
 
-	im = plt.imshow(testing_data.squeeze(0).numpy())
+	im = plt.imshow(testing_data.mean(0).numpy())
 
 	plt.show()

@@ -28,7 +28,7 @@ elif args.model == 'tdnn':
 print('\n', model, '\n')
 print('\n\nNumber of parameters: {}\n'.format(sum(p.numel() for p in model.parameters())))
 
-batch = torch.rand(3, 1, 40, 256)
+batch = torch.rand(3, 4, 40, 256)
 
 out = model.forward(batch)
 

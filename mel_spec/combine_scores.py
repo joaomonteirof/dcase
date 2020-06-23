@@ -53,8 +53,6 @@ if __name__ == '__main__':
 
 			out /= len(score_files)
 
-			out = F.softmax(out, dim=1)
-
 			scores = {}
 
 			for index in idx_to_class:
