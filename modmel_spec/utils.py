@@ -104,6 +104,11 @@ def compute_features(audio):
 
 	audio = torchaudio.compliance.kaldi.fbank(audio, frame_length=40, frame_shift=20, num_mel_bins=40, sample_frequency=48000, high_freq=22050, low_freq=0, use_log_fbank=True).T
 
+	try:
+		audio = audio[:,:500]
+	except IndexError:
+		audio = audio.repeat(1,2)[:,:500]
+
 	audio = torch.stft(input=audio, n_fft=256, hop_length=128, win_length=256, center=True, pad_mode='reflect', normalized=False, onesided=False)
 
 	audio = torch.sqrt(torch.pow(audio[...,0], 2)+torch.pow(audio[...,1], 2)) ## get absolute value
