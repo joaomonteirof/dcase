@@ -64,7 +64,7 @@ def augment_audio(path, sample_rate, tempo, gain):
 		y = load_audio(augmented_filename)
 		return y
 
-def load_randomly_augmented_audio(path, sample_rate=48000, tempo_range=(0.85, 1.15), gain_range=(-6, 8)):
+def load_randomly_augmented_audio(path, sample_rate=44100, tempo_range=(0.85, 1.15), gain_range=(-6, 8)):
 	"""
 	Picks tempo and gain uniformly, applies it to the utterance by using sox utility.
 	Returns the augmented utterance.
@@ -102,7 +102,7 @@ def compute_features(audio):
 
 	audio = torch.from_numpy(audio).unsqueeze(0)
 
-	audio = torchaudio.compliance.kaldi.fbank(audio, frame_length=40, frame_shift=20, num_mel_bins=40, sample_frequency=48000, high_freq=22050, low_freq=0, use_log_fbank=True).T
+	audio = torchaudio.compliance.kaldi.fbank(audio, frame_length=40, frame_shift=20, num_mel_bins=40, sample_frequency=44100, high_freq=22050, low_freq=0, use_log_fbank=True).T
 
 	try:
 		audio = audio[:,:500]
