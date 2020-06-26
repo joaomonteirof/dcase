@@ -43,12 +43,6 @@ if __name__ == '__main__':
 
 	print('\n\nNumber of parameters: {}\n'.format(sum(p.numel() for p in model.parameters())))
 
-	if args.cuda:
-		device = get_freer_gpu()
-		model = model.to(device)
-	else:
-		device=torch.device('cpu')
-
 	total_params, nonzero_params = sum(p.numel() for p in model.parameters()), countNonZeroWeights(model)
 
 	assert (total_params - nonzero_params)>0, 'Error while computing number of non zero params!!!'
