@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from torchvision import datasets
 from models import vgg, resnet, densenet, base_cnn, TDNN
 import numpy as np
-from utils import countNonZeroWeights
+from utils import countNonZeroWeights, get_data
 
 if __name__ == '__main__':
 
