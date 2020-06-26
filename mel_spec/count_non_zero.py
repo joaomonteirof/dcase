@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
 	total_params, nonzero_params = sum(p.numel() for p in model.parameters()), countNonZeroWeights(model)
 
-	assert total_params > nonzero_params, 'Error while computing number of non zero params!!! - Total-Nonzero={}'.format(total_params - nonzero_params)
+	assert total_params >= nonzero_params, 'Error while computing number of non zero params!!! - Total-Nonzero={}'.format(total_params - nonzero_params)
 
 	model_size = nonzero_params*32./1000 + (total_params-nonzero_params)*2./1000 ## kb
 
