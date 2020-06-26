@@ -54,3 +54,8 @@ if __name__ == '__main__':
 	assert (total_params - nonzero_params)>0, 'Error while computing number of non zero params!!!'
 
 	model_size = nonzero_params*32./1000 + (total_params-nonzero_params)*2./1000 ## kb
+
+	print('Total parameters: {}'.format(total_params))
+	print('Nonzero parameters: {}'.format(nonzero_params))
+	print('Zero parameters: {}'.format((total_params-nonzero_params)))
+	print('Model size: {}kb'.format(model_size))
