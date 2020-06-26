@@ -15,6 +15,13 @@ from scipy.signal import convolve2d
 import argparse
 from tempfile import NamedTemporaryFile
 
+def countNonZeroWeights(model):
+	zeros = 0
+	for param in model.parameters():
+		if param is not None:
+			zeros += torch.sum((param != 0.0).int()).item()
+	return zeros
+
 def parse_csv(path):
 	data_dict = {}
 	with open(path, 'r') as file:
