@@ -187,7 +187,7 @@ class ResNet(nn.Module):
 
 		x = x.unsqueeze(1)
 
-		x = self.conv1(x).squeeze(2)
+		x = self.conv1(x).mean(2)
 
 		x = self.bn1(x)
 		x = self.relu(x)
