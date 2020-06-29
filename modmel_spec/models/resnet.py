@@ -130,7 +130,7 @@ class ResNet(nn.Module):
 							 "or a 3-element tuple, got {}".format(replace_stride_with_dilation))
 		self.groups = groups
 		self.base_width = width_per_group
-		self.conv1 = nn.Conv2d(4, self.inplanes, kernel_size=7, stride=2, padding=3, bias=False)
+		self.conv1 = nn.Conv3d(1, self.inplanes, kernel_size=(4,7,7), stride=(1,2,2), padding=(0,3,3), bias=False)
 		self.bn1 = norm_layer(self.inplanes)
 		self.relu = nn.ReLU(inplace=True)
 		self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
@@ -185,7 +185,10 @@ class ResNet(nn.Module):
 
 	def forward(self, x):
 
-		x = self.conv1(x)
+		x = x.unsqueeze(1)
+
+		x = self.conv1(x).squeeze(2)
+
 		x = self.bn1(x)
 		x = self.relu(x)
 		x = self.maxpool(x)
