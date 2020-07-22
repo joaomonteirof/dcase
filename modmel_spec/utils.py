@@ -81,7 +81,7 @@ def augment_spec(example):
 	with torch.no_grad():
 
 		if random.random()>0.5:
-			example = freq_mask(example, F=100, dim=1)
+			example = freq_mask(example, F=40, dim=1)
 		if random.random()>0.5:
 			example = freq_mask(example, F=200, dim=2)
 		if random.random()>0.5:
