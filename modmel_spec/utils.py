@@ -64,7 +64,7 @@ def augment_audio(path, sample_rate, tempo, gain):
 		y = load_audio(augmented_filename)
 		return y
 
-def load_randomly_augmented_audio(path, sample_rate=44100, tempo_range=(0.85, 1.15), gain_range=(-6, 8)):
+def load_randomly_augmented_audio(path, sample_rate=44100, tempo_range=(0.7, 1.3), gain_range=(-7, 9)):
 	"""
 	Picks tempo and gain uniformly, applies it to the utterance by using sox utility.
 	Returns the augmented utterance.
@@ -81,11 +81,11 @@ def augment_spec(example):
 	with torch.no_grad():
 
 		if random.random()>0.5:
-			example = freq_mask(example, F=30, dim=1)
+			example = freq_mask(example, F=100, dim=1)
 		if random.random()>0.5:
-			example = freq_mask(example, F=80, dim=2)
+			example = freq_mask(example, F=200, dim=2)
 		if random.random()>0.5:
-			example += torch.randn_like(example)*random.choice([1e-1, 1e-2, 1e-3, 1e-4])
+			example += torch.randn_like(example)*random.choice([1e-1, 1e-2, 1e-3])
 
 	return example
 
