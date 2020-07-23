@@ -107,7 +107,7 @@ def compute_features(audio):
 	try:
 		audio = audio[:,:500]
 	except IndexError:
-		audio = audio.repeat(1,3)[:,:500]
+		audio = audio.repeat(1,audio.shape[-1]//500+1)[:,:500]
 
 	audio = torch.stft(input=audio, n_fft=256, hop_length=128, win_length=256, center=True, pad_mode='reflect', normalized=False, onesided=False)
 
