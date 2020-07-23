@@ -59,12 +59,12 @@ def augment_audio(path, sample_rate, tempo, gain):
 	with NamedTemporaryFile(suffix=".wav") as augmented_file:
 		augmented_filename = augmented_file.name
 		sox_augment_params = ["tempo", "{:.3f}".format(tempo), "gain", "{:.3f}".format(gain)]
-		sox_params = "sox -t wav \"{}\" -r {} -c 1 -b 16 -e signed {} {} >/dev/null 2>&1".format(path, sample_rate, augmented_filename, " ".join(sox_augment_params))
+		sox_params = "sox -t wav \"{}\" -r {} -c 1 -b 24 -e signed {} {} >/dev/null 2>&1".format(path, sample_rate, augmented_filename, " ".join(sox_augment_params))
 		os.system(sox_params)
 		y = load_audio(augmented_filename)
 		return y
 
-def load_randomly_augmented_audio(path, sample_rate=44100, tempo_range=(0.7, 1.3), gain_range=(-7, 9)):
+def load_randomly_augmented_audio(path, sample_rate=48000, tempo_range=(0.7, 1.3), gain_range=(-7, 9)):
 	"""
 	Picks tempo and gain uniformly, applies it to the utterance by using sox utility.
 	Returns the augmented utterance.
@@ -102,12 +102,12 @@ def compute_features(audio):
 
 	audio = torch.from_numpy(audio).unsqueeze(0)
 
-	audio = torchaudio.compliance.kaldi.fbank(audio, frame_length=40, frame_shift=20, num_mel_bins=40, sample_frequency=44100, high_freq=22050, low_freq=0, use_log_fbank=True).T
+	audio = torchaudio.compliance.kaldi.fbank(audio, frame_length=40, frame_shift=20, num_mel_bins=40, sample_frequency=48000, high_freq=22050, low_freq=0, use_log_fbank=True).T
 
 	try:
 		audio = audio[:,:500]
 	except IndexError:
-		audio = audio.repeat(1,2)[:,:500]
+		audio = audio.repeat(1,3)[:,:500]
 
 	audio = torch.stft(input=audio, n_fft=256, hop_length=128, win_length=256, center=True, pad_mode='reflect', normalized=False, onesided=False)
 
