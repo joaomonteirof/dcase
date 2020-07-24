@@ -115,7 +115,7 @@ def compute_features(audio):
 
 	audio = audio.permute(2, 0, 1) ## averaging out the time dim
 
-	audio = normalize(audio) ## mean subtraction across the mod freq dim.
+	#audio = normalize(audio) ## mean subtraction across the mod freq dim.
 
 	audio = audio.float().contiguous()
 
