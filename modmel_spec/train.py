@@ -18,8 +18,8 @@ parser.add_argument('--batch-size', type=int, default=64, metavar='N', help='inp
 parser.add_argument('--valid-batch-size', type=int, default=16, metavar='N', help='input batch size for testing (default: 256)')
 parser.add_argument('--epochs', type=int, default=500, metavar='N', help='number of epochs to train (default: 500)')
 parser.add_argument('--lr', type=float, default=0.001, metavar='LR', help='learning rate (default: 0.001)')
-parser.add_argument('--momentum', type=float, default=0.9, metavar='m', help='Momentum paprameter (default: 0.9)')
-parser.add_argument('--patience', type=int, default=30, metavar='N', help='number of epochs to wait whith no improvement prior to reducing lr')
+parser.add_argument('--beta1', type=float, default=0.9, metavar='beta1', help='Beta1 (default: 0.9)')
+parser.add_argument('--beta2', type=float, default=0.999, metavar='beta2', help='Beta2 (default: 0.9)')
 parser.add_argument('--l2', type=float, default=1e-4, metavar='lambda', help='L2 wheight decay coefficient (default: 0.0005)')
 parser.add_argument('--smoothing', type=float, default=0.2, metavar='l', help='Label smoothing (default: 0.2)')
 parser.add_argument('--max-gnorm', type=float, default=10., metavar='clip', help='Max gradient norm (default: 10.0)')
@@ -59,7 +59,7 @@ if args.model == 'cnn':
 elif args.model == 'vgg':
 	model = vgg.VGG('VGG11', n_classes=args.nclasses)
 elif args.model == 'resnet':
-	model = resnet.ResNet18(n_classes=args.nclasses)
+	model = resnet.ResNet50(n_classes=args.nclasses)
 elif args.model == 'densenet':
 	model = densenet.DenseNet121(n_classes=args.nclasses)
 elif args.model == 'tdnn':
@@ -94,9 +94,9 @@ else:
 	writer = None
 	args_dict = None
 
-optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.l2, nesterov=True)
+optimizer = optim.Adam(model.parameters(), lr=args.lr, besta=(args.beta1, args.beta2), weight_decay=args.l2)
 
-trainer = TrainLoop(model, optimizer, train_loader, valid_loader, max_gnorm=args.max_gnorm, label_smoothing=args.smoothing, verbose=args.verbose, save_cp=(not args.no_cp), checkpoint_path=args.checkpoint_path, checkpoint_epoch=args.checkpoint_epoch, patience=args.patience, cuda=args.cuda, logger=writer)
+trainer = TrainLoop(model, optimizer, train_loader, valid_loader, max_gnorm=args.max_gnorm, label_smoothing=args.smoothing, verbose=args.verbose, save_cp=(not args.no_cp), checkpoint_path=args.checkpoint_path, checkpoint_epoch=args.checkpoint_epoch, cuda=args.cuda, logger=writer)
 
 if args.verbose >0:
 	if args_dict is None:

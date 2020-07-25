@@ -8,7 +8,7 @@ from losses import LabelSmoothingLoss
 
 class TrainLoop(object):
 
-	def __init__(self, model, optimizer, train_loader, valid_loader, max_gnorm, label_smoothing, verbose=-1, cp_name=None, save_cp=False, checkpoint_path=None, checkpoint_epoch=None, patience=100, cuda=True, logger=None):
+	def __init__(self, model, optimizer, train_loader, valid_loader, max_gnorm, label_smoothing, verbose=-1, cp_name=None, save_cp=False, checkpoint_path=None, checkpoint_epoch=None, cuda=True, logger=None):
 		if checkpoint_path is None:
 			# Save to current directory
 			self.checkpoint_path = os.getcwd()
@@ -33,7 +33,6 @@ class TrainLoop(object):
 		self.history = {'train_loss': [], 'train_loss_batch': []}
 		self.disc_label_smoothing = label_smoothing
 		self.best_er = np.inf
-		self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, factor=0.5, patience=patience, verbose=True if self.verbose>0 else False, threshold=1e-4, min_lr=1e-7)
 
 		if label_smoothing>0.0:
 			self.ce_criterion = LabelSmoothingLoss(label_smoothing, lbl_set_size=self.model.n_classes)
@@ -90,8 +89,6 @@ class TrainLoop(object):
 
 			if self.save_cp and self.cur_epoch % save_every == 0 and not self.save_epoch_cp:
 					self.checkpointing()
-
-			self.scheduler.step(self.history['ER'][-1])
 
 		if self.verbose>0:
 			print('Training done!')
@@ -185,7 +182,6 @@ class TrainLoop(object):
 		ckpt = {'model_state': self.model.state_dict(),
 		'n_classes': self.model.n_classes,
 		'optimizer_state': self.optimizer.state_dict(),
-		'scheduler_state': self.scheduler.state_dict(),
 		'history': self.history,
 		'total_iters': self.total_iters,
 		'cur_epoch': self.cur_epoch}
@@ -203,8 +199,6 @@ class TrainLoop(object):
 			self.model.load_state_dict(ckpt['model_state'])
 			# Load optimizer state
 			self.optimizer.load_state_dict(ckpt['optimizer_state'])
-			# Load scheduler state
-			self.scheduler.load_state_dict(ckpt['scheduler_state'])
 			# Load history
 			self.history = ckpt['history']
 			self.total_iters = ckpt['total_iters']
