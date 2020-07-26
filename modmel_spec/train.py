@@ -94,7 +94,7 @@ else:
 	writer = None
 	args_dict = None
 
-optimizer = optim.Adam(model.parameters(), lr=args.lr, besta=(args.beta1, args.beta2), weight_decay=args.l2)
+optimizer = optim.Adam(model.parameters(), lr=args.lr, betas=(args.beta1, args.beta2), weight_decay=args.l2)
 
 trainer = TrainLoop(model, optimizer, train_loader, valid_loader, max_gnorm=args.max_gnorm, label_smoothing=args.smoothing, verbose=args.verbose, save_cp=(not args.no_cp), checkpoint_path=args.checkpoint_path, checkpoint_epoch=args.checkpoint_epoch, cuda=args.cuda, logger=writer)
 
