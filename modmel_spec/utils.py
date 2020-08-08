@@ -109,7 +109,7 @@ def compute_features(audio):
 	else:
 		audio = audio.repeat(1,500//audio.shape[-1]+1)[:,:500]
 
-	audio = torch.stft(input=audio, n_fft=128, hop_length=64, win_length=128, center=True, pad_mode='reflect', normalized=False, onesided=False)
+	audio = torch.stft(input=audio, n_fft=64, hop_length=32, win_length=64, center=True, pad_mode='reflect', normalized=False, onesided=False)
 
 	audio = torch.sqrt(torch.pow(audio[...,0], 2)+torch.pow(audio[...,1], 2)) ## get absolute value
 
