@@ -132,7 +132,7 @@ class ResNet(nn.Module):
 		self.base_width = width_per_group
 		self.bn_input_mod = norm_layer(32)
 		self.bn_input_spec = norm_layer(1)
-		self.conv_mod = nn.Conv2d(1, 32, kernel_size=(1,8), stride=(1,2), padding=(0,9), bias=False)
+		self.conv_mod = nn.Conv2d(1, 32, kernel_size=(1,30), stride=(1,15), padding=(0,0), bias=False)
 		self.bn_mod = norm_layer(32)
 		self.conv1 = nn.Conv3d(1, self.inplanes, kernel_size=(64,1,1), stride=(1,1,1), padding=(0,0,0), bias=False)
 		self.bn1 = norm_layer(self.inplanes)
