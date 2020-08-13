@@ -23,7 +23,7 @@ def collater(batch):
 		mod.append(item[0][1].unsqueeze(0))
 		labels.append(torch.Tensor(item[1]))
 
-	spec, mod, labels = torch.cat(spec, dim=0).float().contiguous(), torch.cat(mod, dim=0).float().contiguous(), torch.cat(labels dim=0).long()
+	spec, mod, labels = torch.cat(spec, dim=0).float().contiguous(), torch.cat(mod, dim=0).float().contiguous(), torch.cat(labels, dim=0).long()
 
 	return spec, mod, labels
 
