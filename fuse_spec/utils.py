@@ -16,7 +16,14 @@ from tempfile import NamedTemporaryFile
 
 def collater(batch):
 
-	spec, mod, labels = torch.cat(batch[0][0], dim=0), torch.cat(batch[0][1], dim=1), torch.cat(batch[1], dim=2)
+	spec, mod, labels = [], [], []
+
+	for item in batch:
+		spec.append(item[0][0].unsqueeze(0))
+		mod.append(item[0][1].unsqueeze(0))
+		labels.append(torch.Tensor(item[1]))
+
+	spec, mod, labels = torch.cat(spec, dim=0).float().contiguous(), torch.cat(mod, dim=0).float().contiguous(), torch.cat(labels dim=0).long()
 
 	return spec, mod, labels
 
