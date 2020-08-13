@@ -10,7 +10,7 @@ from models import resnet
 import numpy as np
 import os
 import sys
-from utils import get_data, get_data_augment, parse_args_for_log, get_freer_gpu, set_np_randomseed
+from utils import get_data, get_data_augment, parse_args_for_log, get_freer_gpu, set_np_randomseed, collater
 
 # Training settings
 parser = argparse.ArgumentParser(description='Acoustic scene classification from modulation spectra')
@@ -45,10 +45,10 @@ if args.cuda:
 	torch.backends.cudnn.benchmark=True
 
 trainset = datasets.DatasetFolder(root=args.data_path, loader=get_data if args.no_aug else get_data_augment, extensions=('wav'))
-train_loader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers, worker_init_fn=set_np_randomseed, pin_memory=True)
+train_loader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers, worker_init_fn=set_np_randomseed, pin_memory=True, collate_fn=collater)
 
 validset = datasets.DatasetFolder(root=args.valid_data_path, loader=get_data, extensions=('wav'))
-valid_loader = torch.utils.data.DataLoader(validset, batch_size=args.valid_batch_size, shuffle=True, num_workers=args.n_workers, pin_memory=True)
+valid_loader = torch.utils.data.DataLoader(validset, batch_size=args.valid_batch_size, shuffle=True, num_workers=args.n_workers, pin_memory=True, collate_fn=collater)
 
 args.nclasses = len(trainset.classes)
 

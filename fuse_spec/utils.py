@@ -14,6 +14,12 @@ from scipy.signal import convolve2d
 import argparse
 from tempfile import NamedTemporaryFile
 
+def collater(batch):
+
+	spec, mod, labels = torch.cat(batch[0], dim=0), torch.cat(batch[1], dim=1), torch.cat(batch[2], dim=2)
+
+	return spec, mod, labels
+
 def parse_args_for_log(args):
 	args_dict = dict(vars(args))
 	for arg_key in args_dict:
