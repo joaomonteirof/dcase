@@ -151,7 +151,7 @@ def get_data_augment(path):
 	data_spec, data_mod = compute_features(data)
 
 	if random.random()>0.5:
-		data_spec, data_mod = augment_spec(data_mod), augment_spec(data_mod)
+		data_spec, data_mod = augment_spec(data_spec), augment_spec(data_mod)
 
 	return data_spec, data_mod
 
