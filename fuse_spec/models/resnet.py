@@ -134,7 +134,7 @@ class ResNet(nn.Module):
 		self.bn_input_spec = norm_layer(1)
 		self.conv_mod = nn.Conv2d(1, 32, kernel_size=(1,30), stride=(1,15), padding=(0,0), bias=False)
 		self.bn_mod = norm_layer(32)
-		self.conv1 = nn.Conv3d(1, self.inplanes, kernel_size=(64,1,1), stride=(1,1,1), padding=(0,0,0), bias=False)
+		self.conv1 = nn.Conv2d(64, self.inplanes, kernel_size=7, stride=2, padding=3, bias=False)
 		self.bn1 = norm_layer(self.inplanes)
 		self.relu = nn.ReLU(inplace=True)
 		self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
@@ -195,11 +195,7 @@ class ResNet(nn.Module):
 		x_spec_mod = self.conv_mod(x_spec)
 
 		x = torch.cat([x_spec_mod, x_mod], 1)
-
-		x = x.unsqueeze(1)
 		x = self.conv1(x)
-		x = x.mean(2)
-
 		x = self.bn1(x)
 		x = self.relu(x)
 		x = self.maxpool(x)
