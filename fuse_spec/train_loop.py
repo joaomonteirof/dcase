@@ -106,12 +106,13 @@ class TrainLoop(object):
 		self.model.train()
 		self.optimizer.zero_grad()
 
-		x, y = batch
+		x_spec, x_mod, y = batch
 
-		x = x.to(self.device, non_blocking=True)
+		x_spec = x_spec.to(self.device, non_blocking=True)
+		x_mod = x_mod.to(self.device, non_blocking=True)
 		y = y.to(self.device, non_blocking=True)
 
-		out = self.model.forward(x)
+		out = self.model.forward(x_spec, x_mod)
 
 		loss = self.ce_criterion(out, y)
 
@@ -132,12 +133,13 @@ class TrainLoop(object):
 
 		with torch.no_grad():
 
-			x, y = batch
+			x_spec, x_mod, y = batch
 
-			x = x.to(self.device, non_blocking=True)
+			x_spec = x_spec.to(self.device, non_blocking=True)
+			x_mod = x_mod.to(self.device, non_blocking=True)
 			y = y.to(self.device, non_blocking=True)
 
-			out = self.model.forward(x)
+			out = self.model.forward(x_spec, x_mod)
 
 			_, pred = out.topk(1, 1, True, True)
 			pred = pred.t()
