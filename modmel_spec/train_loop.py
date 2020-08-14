@@ -184,7 +184,8 @@ class TrainLoop(object):
 		'optimizer_state': self.optimizer.state_dict(),
 		'history': self.history,
 		'total_iters': self.total_iters,
-		'cur_epoch': self.cur_epoch}
+		'cur_epoch': self.cur_epoch,
+		'half_spec': self.model.half_spec}
 		try:
 			torch.save(ckpt, self.save_epoch_fmt.format(self.cur_epoch))
 		except:

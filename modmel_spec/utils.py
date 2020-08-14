@@ -88,7 +88,7 @@ def augment_spec(example):
 		if random.random()>0.5:
 			example = freq_mask(example, F=64, dim=2)
 		if random.random()>0.5:
-			example += torch.randn_like(example)*random.choice([1e-1, 1e-2, 1e-3])
+			example += torch.randn_like(example)*random.choice([1e-1, 1e-2])
 
 	return example
 
@@ -112,7 +112,7 @@ def compute_features(audio):
 	else:
 		audio = audio.repeat(1,500//audio.shape[-1]+1)[:,:500]
 
-	audio = torch.stft(input=audio, n_fft=64, hop_length=32, win_length=64, center=True, pad_mode='reflect', normalized=False, onesided=False)
+	audio = torch.stft(input=audio, n_fft=32, hop_length=16, win_length=32, center=True, pad_mode='reflect', normalized=False, onesided=False)
 
 	audio = torch.sqrt(torch.pow(audio[...,0], 2)+torch.pow(audio[...,1], 2)) ## get absolute value
 

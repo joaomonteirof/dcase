@@ -3,7 +3,7 @@ import argparse
 import torch
 import torch.nn.functional as F
 from torchvision import datasets, transforms
-from models import vgg, resnet, densenet, base_cnn, TDNN
+from models import resnet
 from sklearn.metrics import confusion_matrix, log_loss
 import numpy as np
 import os
@@ -18,7 +18,7 @@ if __name__ == '__main__':
 	parser.add_argument('--cp-path', type=str, default=None, metavar='Path', help='Path for checkpointing')
 	parser.add_argument('--data-path', type=str, default='./data/', metavar='Path', help='Path to data')
 	parser.add_argument('--batch-size', type=int, default=100, metavar='N', help='input batch size for testing (default: 100)')
-	parser.add_argument('--model', choices=['cnn', 'vgg', 'resnet', 'densenet', 'tdnn'], default='resnet')
+	parser.add_argument('--model', choices=['resnet'], default='resnet')
 	parser.add_argument('--no-cuda', action='store_true', default=False, help='Disables GPU use')
 	parser.add_argument('--workers', type=int, default=4, metavar='N', help='Data load workers (default: 4)')
 	args = parser.parse_args()
@@ -43,17 +43,9 @@ if __name__ == '__main__':
 
 	ckpt = torch.load(args.cp_path, map_location = lambda storage, loc: storage)
 
-	if args.model == 'cnn':
-		model = base_cnn.CNN(n_classes=args.nclasses)
-	elif args.model == 'vgg':
-		model = vgg.VGG('VGG11', n_classes=args.nclasses)
-	elif args.model == 'resnet':
-		model = resnet.ResNet50(n_classes=args.nclasses)
-	elif args.model == 'densenet':
-		model = densenet.DenseNet121(n_classes=args.nclasses)
-	elif args.model == 'tdnn':
-		model = TDNN.TDNN(n_classes=args.nclasses)
-	
+	if args.model == 'resnet':
+		model = resnet.ResNet18(n_classes=args.nclasses, half_spec=ckpt['half_spec'])
+
 	try:
 		print(model.load_state_dict(ckpt['model_state'], strict=True))
 		print('\n')

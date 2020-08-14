@@ -111,8 +111,11 @@ class ResNet(nn.Module):
 
 	def __init__(self, block, layers, num_classes=1000, zero_init_residual=False,
 				 groups=1, width_per_group=64, replace_stride_with_dilation=None,
-				 norm_layer=None):
+				 norm_layer=None, half_spec=False):
 		super(ResNet, self).__init__()
+
+		self.half_spec = half_spec
+
 		if norm_layer is None:
 			norm_layer = nn.BatchNorm2d
 		self._norm_layer = norm_layer
@@ -130,7 +133,8 @@ class ResNet(nn.Module):
 							 "or a 3-element tuple, got {}".format(replace_stride_with_dilation))
 		self.groups = groups
 		self.base_width = width_per_group
-		self.conv1 = nn.Conv3d(1, self.inplanes, kernel_size=(16,1,1), stride=(1,1,1), padding=(0,0,0), bias=False)
+		self.bn_input_mod = norm_layer(32)
+		self.conv1 = nn.Conv2d(32, self.inplanes, kernel_size=5, stride=1, padding=0, bias=False)
 		self.bn1 = norm_layer(self.inplanes)
 		self.relu = nn.ReLU(inplace=True)
 		self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
@@ -185,10 +189,12 @@ class ResNet(nn.Module):
 
 	def forward(self, x):
 
-		x = x.unsqueeze(1)
-		x = self.conv1(x)
-		x = x.mean(2)
+		if self.half_spec:
+			x = x[:,:,x.size(2)//2:,:]
 
+		x = self.bn_input_mod(x)
+
+		x = self.conv1(x)
 		x = self.bn1(x)
 		x = self.relu(x)
 		x = self.maxpool(x)
@@ -205,20 +211,20 @@ class ResNet(nn.Module):
 
 		return x
 
-def ResNet12(n_classes=1000):
-	return ResNet(BasicBlock, [2,1,1,1], num_classes=n_classes)
+def ResNet12(n_classes=1000, half_spec=False):
+	return ResNet(BasicBlock, [2,1,1,1], num_classes=n_classes, half_spec=half_spec)
 
-def ResNet18(n_classes=1000):
-	return ResNet(BasicBlock, [2,2,2,2], num_classes=n_classes)
+def ResNet18(n_classes=1000, half_spec=False):
+	return ResNet(BasicBlock, [2,2,2,2], num_classes=n_classes, half_spec=half_spec)
 
-def ResNet34(n_classes=1000):
-	return ResNet(BasicBlock, [3,4,6,3], num_classes=n_classes)
+def ResNet34(n_classes=1000, half_spec=False):
+	return ResNet(BasicBlock, [3,4,6,3], num_classes=n_classes, half_spec=half_spec)
 
-def ResNet50(n_classes=1000):
-	return ResNet(Bottleneck, [3,4,6,3], num_classes=n_classes)
+def ResNet50(n_classes=1000, half_spec=False):
+	return ResNet(Bottleneck, [3,4,6,3], num_classes=n_classes, half_spec=half_spec)
 
-def ResNet101(n_classes=1000):
-	return ResNet(Bottleneck, [3,4,23,3], num_classes=n_classes)
+def ResNet101(n_classes=1000, half_spec=False):
+	return ResNet(Bottleneck, [3,4,23,3], num_classes=n_classes, half_spec=half_spec)
 
-def ResNet152(n_classes=1000):
-	return ResNet(Bottleneck, [3,8,36,3], num_classes=n_classes)
+def ResNet152(n_classes=1000, half_spec=False):
+	return ResNet(Bottleneck, [3,8,36,3], num_classes=n_classes, half_spec=half_spec)

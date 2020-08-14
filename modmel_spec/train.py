@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 from train_loop import TrainLoop
 import torch.optim as optim
 from torchvision import datasets, transforms
-from models import vgg, resnet, densenet, base_cnn, TDNN
+from models import resnet
 import numpy as np
 import os
 import sys
@@ -29,10 +29,11 @@ parser.add_argument('--data-path', type=str, default='./data_train', metavar='Pa
 parser.add_argument('--valid-data-path', type=str, default='./data_val', metavar='Path', help='Path to data')
 parser.add_argument('--seed', type=int, default=42, metavar='S', help='random seed (default: 42)')
 parser.add_argument('--n-workers', type=int, default=4, metavar='N', help='Workers for data loading. Default is 4')
-parser.add_argument('--model', choices=['cnn', 'vgg', 'resnet', 'densenet', 'tdnn'], default='resnet')
+parser.add_argument('--model', choices=['resnet'], default='resnet')
 parser.add_argument('--pretrained-path', type=str, default=None, metavar='Path', help='Path to trained model. Discards outpu layer')
 parser.add_argument('--save-every', type=int, default=1, metavar='N', help='how many epochs to wait before saving checkpoints. Default is 1')
 parser.add_argument('--eval-every', type=int, default=1000, metavar='N', help='how many iterations to wait before evaluatiing models. Default is 1000')
+parser.add_argument('--half-spec', action='store_true', default=False, help='Discards the lower frequency half of the spectrum')
 parser.add_argument('--no-aug', action='store_true', default=False, help='Disables data augmentation')
 parser.add_argument('--no-cuda', action='store_true', default=False, help='Disables GPU use')
 parser.add_argument('--no-cp', action='store_true', default=False, help='Disables checkpointing')
@@ -54,16 +55,8 @@ args.nclasses = len(trainset.classes)
 
 print(args, '\n')
 
-if args.model == 'cnn':
-	model = base_cnn.CNN(n_classes=args.nclasses)
-elif args.model == 'vgg':
-	model = vgg.VGG('VGG11', n_classes=args.nclasses)
-elif args.model == 'resnet':
-	model = resnet.ResNet50(n_classes=args.nclasses)
-elif args.model == 'densenet':
-	model = densenet.DenseNet121(n_classes=args.nclasses)
-elif args.model == 'tdnn':
-	model = TDNN.TDNN(n_classes=args.nclasses)
+if args.model == 'resnet':
+	model = resnet.ResNet18(n_classes=args.nclasses, half_spec=args.half_spec)
 
 if args.pretrained_path:
 	try:
