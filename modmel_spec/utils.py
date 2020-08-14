@@ -61,6 +61,9 @@ def augment_audio(path, sample_rate, tempo, gain):
 		sox_augment_params = ["tempo", "{:.3f}".format(tempo), "gain", "{:.3f}".format(gain)]
 		sox_params = "sox -t wav \"{}\" -r {} -c 1 -b 24 -e signed {} {} >/dev/null 2>&1".format(path, sample_rate, augmented_filename, " ".join(sox_augment_params))
 		os.system(sox_params)
+		if random.random()>0.8:
+			sox_params = "sox -t wav \"{}\" -r {} -c 1 -b 24 -e signed reverse >/dev/null 2>&1".format(path, sample_rate, augmented_filename)
+			os.system(sox_params)
 		y = load_audio(augmented_filename)
 		return y
 
