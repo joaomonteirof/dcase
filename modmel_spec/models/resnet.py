@@ -190,7 +190,7 @@ class ResNet(nn.Module):
 	def forward(self, x):
 
 		if self.half_spec:
-			x = x[:,:,x.size(2)//2:,:]
+			x = x[:,:,:x.size(2)//2,:]
 
 		x = self.bn_input_mod(x)
 
