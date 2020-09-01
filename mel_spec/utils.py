@@ -137,14 +137,14 @@ def get_data(path, max_nb_frames=500):
 	data = torch.from_numpy(normalize(data)).unsqueeze(0).float().contiguous()
 
 	'''
-	conv = torch.nn.conv2d(1, 1, kernel_size=(1,128), bias=None, stride=(1,64), padding=(0,40), padding_mode='reflect')
-	conv = torch.nn.conv2d(1, 1, kernel_size=(1,128), bias=None, stride=(1,32), padding=(0,64), padding_mode='reflect')
+	conv = torch.nn.Conv2d(1, 1, kernel_size=(1,128), bias=None, stride=(1,64), padding=(0,40), padding_mode='reflect')
+	conv = torch.nn.Conv2d(1, 1, kernel_size=(1,128), bias=None, stride=(1,32), padding=(0,64), padding_mode='reflect')
 	with torch.no_grad():
 		conv.weight = torch.nn.Parameter(torch.ones(1, 1, 1, 128).float())
 		data = conv(data.unsqueeze(0)).squeeze(0)/128.
 
-	conv = torch.nn.conv2d(1, 1, kernel_size=(1,256), bias=None, stride=(1,128), padding=(0,96), padding_mode='reflect')
-	conv = torch.nn.conv2d(1, 1, kernel_size=(1,256), bias=None, stride=(1,64), padding=(0,128), padding_mode='reflect')
+	conv = torch.nn.Conv2d(1, 1, kernel_size=(1,256), bias=None, stride=(1,128), padding=(0,96), padding_mode='reflect')
+	conv = torch.nn.Conv2d(1, 1, kernel_size=(1,256), bias=None, stride=(1,64), padding=(0,128), padding_mode='reflect')
 	with torch.no_grad():
 		conv.weight = torch.nn.Parameter(torch.ones(1, 1, 1, 256).float())
 		data = conv(data.unsqueeze(0)).squeeze(0)/256.
