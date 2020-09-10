@@ -21,6 +21,7 @@ class TrainLoop(object):
 		self.cuda_mode = cuda
 		self.model = model
 		self.optimizer = optimizer
+		self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=[40, 80], gamma=0.1)
 		self.max_gnorm = max_gnorm
 		self.train_loader = train_loader
 		self.valid_loader = valid_loader
@@ -50,6 +51,7 @@ class TrainLoop(object):
 		while (self.cur_epoch < n_epochs):
 
 			self.cur_epoch += 1
+			self.scheduler.step()
 
 			np.random.seed()
 
@@ -182,6 +184,7 @@ class TrainLoop(object):
 		ckpt = {'model_state': self.model.state_dict(),
 		'n_classes': self.model.n_classes,
 		'optimizer_state': self.optimizer.state_dict(),
+		'scheduler_state': self.scheduler.state_dict(),
 		'history': self.history,
 		'total_iters': self.total_iters,
 		'cur_epoch': self.cur_epoch,
@@ -200,6 +203,8 @@ class TrainLoop(object):
 			self.model.load_state_dict(ckpt['model_state'])
 			# Load optimizer state
 			self.optimizer.load_state_dict(ckpt['optimizer_state'])
+			# Load scheduler state
+			self.scheduler.load_state_dict(ckpt['scheduler_state'])
 			# Load history
 			self.history = ckpt['history']
 			self.total_iters = ckpt['total_iters']
