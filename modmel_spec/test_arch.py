@@ -20,7 +20,7 @@ if args.model == 'resnet':
 print('\n', model, '\n')
 print('\n\nNumber of parameters: {}\n'.format(sum(p.numel() for p in model.parameters())))
 
-batch = torch.rand(3, 8, 40, 32)
+batch = torch.rand(3, 16, 40, 32)
 
 out = model.forward(batch)
 
