@@ -19,7 +19,7 @@ if __name__ == '__main__':
 	parser.add_argument('--cp-path', type=str, default=None, metavar='Path', help='Path for checkpointing')
 	parser.add_argument('--data-path', type=str, default='./data/', metavar='Path', help='Path to data')
 	parser.add_argument('--n-frames', type=int, default=500, metavar='N', help='Number of frames per utterance (default: 500)')
-	parser.add_argument('--batch-size', type=str, default='./data/train.hdf', metavar='Path', help='Path to hdf data')
+	parser.add_argument('--batch-size', type=int, default=64, metavar='B', help='Batch size (default: 64)')
 	parser.add_argument('--model', choices=['cnn', 'vgg', 'resnet', 'densenet', 'tdnn'], default='resnet')
 	parser.add_argument('--no-cuda', action='store_true', default=False, help='Disables GPU use')
 	parser.add_argument('--workers', type=int, default=4, metavar='N', help='Data load workers (default: 4)')
