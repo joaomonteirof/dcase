@@ -49,7 +49,7 @@ train_loader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size,
 validset = Loader(hdf5_name = args.valid_hdf_file)
 valid_loader = torch.utils.data.DataLoader(validset, batch_size=args.valid_batch_size, shuffle=True, num_workers=args.n_workers, pin_memory=True)
 
-args.nclasses = len(trainset.classes)
+args.nclasses = trainset.nclasses
 
 print(args, '\n')
 
