@@ -12,10 +12,10 @@ class CNN(nn.Module):
 		self.n_classes = n_classes
 
 		self.features = self._make_layers(CFG)
-		self.classifier = nn.Sequential(nn.Linear(64, 32),
-										nn.Dropout(0.2),
+		self.classifier = nn.Sequential(nn.Linear(128, 64),
+										nn.Dropout(0.3),
 										nn.ReLU(),
-										nn.Linear(32, self.n_classes) )
+										nn.Linear(64, self.n_classes) )
 
 	def forward(self, x):
 		x = self.features(x).mean(-1)

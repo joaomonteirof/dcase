@@ -11,7 +11,7 @@ class StatisticalPooling(nn.Module):
 		return torch.cat((mu, std), dim=1)
 
 class TDNN(nn.Module):
-	def __init__(self, ncoef=40, init_coef=0, n_classes=1000):
+	def __init__(self, ncoef=64, init_coef=0, n_classes=1000):
 		super(TDNN, self).__init__()
 
 		self.ncoef=ncoef
