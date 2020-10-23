@@ -25,7 +25,7 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 	args.cuda = True if not args.no_cuda and torch.cuda.is_available() else False
 
-	testset = Loader(hdf5_name = args.data_path, train=False)
+	testset = Loader(hdf5_name = args.data_path)
 	test_loader = torch.utils.data.DataLoader(testset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
 
 	args.nclasses = testset.nclasses

@@ -2,16 +2,12 @@ import h5py
 import numpy as np
 import torch
 from torch.utils.data import Dataset
-from librosa.feature import delta as delta_
 
 class Loader(Dataset):
 
-	def __init__(self, hdf5_name, max_nb_frames=2000, train=True, delta=False):
+	def __init__(self, hdf5_name):
 		super(Loader, self).__init__()
 		self.hdf5_name = hdf5_name
-		self.max_nb_frames = int(max_nb_frames)
-		self.delta=delta
-		self.train=train
 
 		self.create_lists()
 
@@ -25,29 +21,12 @@ class Loader(Dataset):
 
 		if not self.open_file: self.open_file = h5py.File(self.hdf5_name, 'r')
 
-		utt_data = torch.from_numpy( self.prep_utterance( self.open_file[spk][utt] ) )
+		utt_data = torch.from_numpy( self.open_file[spk][utt] )
 
 		return utt_data.contiguous(), y.squeeze()
 
 	def __len__(self):
 		return len(self.utt_list)
-
-	def prep_utterance(self, data):
-
-		if self.train:
-
-			if data.shape[-1]>self.max_nb_frames:
-				ridx = np.random.randint(0, data.shape[-1]-self.max_nb_frames)
-				data_ = data[:, :, ridx:(ridx+self.max_nb_frames)]
-			else:
-				mul = int(np.ceil(self.max_nb_frames/data.shape[-1]))
-				data_ = np.tile(data, (1, 1, mul))
-				data_ = data_[:, :, :self.max_nb_frames]
-
-			if self.delta:
-				data_ = np.concatenate([data_, delta_(data_,width=3,order=1), delta_(data_,width=3,order=2)], axis=0)
-
-		return data_
 
 	def create_lists(self):
 

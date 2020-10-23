@@ -43,10 +43,10 @@ args.cuda = True if not args.no_cuda and torch.cuda.is_available() else False
 if args.cuda:
 	torch.backends.cudnn.benchmark=True
 
-trainset = Loader(hdf5_name = args.train_hdf_file, max_nb_frames = args.n_frames, train=True, delta = args.delta)
+trainset = Loader(hdf5_name = args.train_hdf_file)
 train_loader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers, worker_init_fn=set_np_randomseed, pin_memory=True)
 
-validset = Loader(hdf5_name = args.valid_hdf_file, train=False, delta = args.delta)
+validset = Loader(hdf5_name = args.valid_hdf_file)
 valid_loader = torch.utils.data.DataLoader(validset, batch_size=args.valid_batch_size, shuffle=True, num_workers=args.n_workers, pin_memory=True)
 
 args.nclasses = len(trainset.classes)
