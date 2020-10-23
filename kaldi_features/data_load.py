@@ -5,9 +5,10 @@ from torch.utils.data import Dataset
 
 class Loader(Dataset):
 
-	def __init__(self, hdf5_name):
+	def __init__(self, hdf5_name, max_nb_frames):
 		super(Loader, self).__init__()
 		self.hdf5_name = hdf5_name
+		self.max_nb_frames = int(max_nb_frames)
 
 		self.create_lists()
 
@@ -21,12 +22,24 @@ class Loader(Dataset):
 
 		if not self.open_file: self.open_file = h5py.File(self.hdf5_name, 'r')
 
-		utt_data = torch.from_numpy( self.open_file[spk][utt][()] )
+		utt_data = torch.from_numpy( self.prep_utterance(self.open_file[spk][utt]) )
 
 		return utt_data.contiguous(), y.squeeze()
 
 	def __len__(self):
 		return len(self.utt_list)
+
+	def prep_utterance(self, data):
+
+		if data.shape[-1]>self.max_nb_frames:
+			ridx = np.random.randint(0, data.shape[-1]-self.max_nb_frames)
+			data_ = data[:, :, ridx:(ridx+self.max_nb_frames)]
+		else:
+			mul = int(np.ceil(self.max_nb_frames/data.shape[-1]))
+			data_ = np.tile(data, (1, 1, mul))
+			data_ = data_[:, :, :self.max_nb_frames]
+
+		return data_
 
 	def create_lists(self):
 

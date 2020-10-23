@@ -18,6 +18,7 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description='Evaluation')
 	parser.add_argument('--cp-path', type=str, default=None, metavar='Path', help='Path for checkpointing')
 	parser.add_argument('--data-path', type=str, default='./data/', metavar='Path', help='Path to data')
+	parser.add_argument('--n-frames', type=int, default=500, metavar='N', help='Number of frames per utterance (default: 500)')
 	parser.add_argument('--batch-size', type=str, default='./data/train.hdf', metavar='Path', help='Path to hdf data')
 	parser.add_argument('--model', choices=['cnn', 'vgg', 'resnet', 'densenet', 'tdnn'], default='resnet')
 	parser.add_argument('--no-cuda', action='store_true', default=False, help='Disables GPU use')
@@ -25,7 +26,7 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 	args.cuda = True if not args.no_cuda and torch.cuda.is_available() else False
 
-	testset = Loader(hdf5_name = args.data_path)
+	testset = Loader(hdf5_name = args.data_path, max_nb_frames = args.n_frames)
 	test_loader = torch.utils.data.DataLoader(testset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
 
 	args.nclasses = testset.nclasses
