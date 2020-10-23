@@ -21,7 +21,7 @@ class Loader(Dataset):
 
 		if not self.open_file: self.open_file = h5py.File(self.hdf5_name, 'r')
 
-		utt_data = torch.from_numpy( self.open_file[spk][utt] )
+		utt_data = torch.from_numpy( self.open_file[spk][utt][()] )
 
 		return utt_data.contiguous(), y.squeeze()
 
