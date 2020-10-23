@@ -39,8 +39,8 @@ if __name__ == '__main__':
 
 	idx_to_class = {}
 
-	for key in testset.class_to_idx:
-		idx_to_class[str(testset.class_to_idx[key])] = key
+	for key in testset.spk2utt:
+		idx_to_class[str(testset.spk2utt[key])] = key
 	print(idx_to_class, '\n')
 
 	ckpt = torch.load(args.cp_path, map_location = lambda storage, loc: storage)
@@ -101,7 +101,7 @@ if __name__ == '__main__':
 		labels = torch.cat(labels, 0).cpu().numpy()
 		scores = torch.cat(scores, 0).cpu()
 
-	classes_list = testset.classes
+	classes_list = testset.spk_list
 	cm_matrix = confusion_matrix(labels, predictions)
 	accuracies = 100.0*cm_matrix.diagonal()/cm_matrix.sum(axis=1)
 
