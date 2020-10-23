@@ -3,7 +3,6 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 from librosa.feature import delta as delta_
-from utils.utils import strided_app
 
 class Loader(Dataset):
 
