@@ -23,6 +23,7 @@ if __name__ == '__main__':
 	parser.add_argument('--model', choices=['cnn', 'vgg', 'resnet', 'densenet', 'tdnn'], default='resnet')
 	parser.add_argument('--no-cuda', action='store_true', default=False, help='Disables GPU use')
 	parser.add_argument('--workers', type=int, default=4, metavar='N', help='Data load workers (default: 4)')
+	parser.add_argument('--out-path', type=str, default=None, metavar='Path', help='Path to output scores')
 	args = parser.parse_args()
 	args.cuda = True if not args.no_cuda and torch.cuda.is_available() else False
 
@@ -110,3 +111,8 @@ if __name__ == '__main__':
 		print(class_, ': {:0.4f}% - {:0.4f}'.format(accuracies[i], F.binary_cross_entropy(input=scores[:, testset.spk2label[class_]], target=torch.where(torch.from_numpy(labels) == testset.spk2label[class_], torch.ones(scores.size(0)), torch.zeros(scores.size(0)))).item()))
 
 	print('\n')
+
+	if args.out_path is not None:
+		with open(args.out_path, 'w') as f:
+			for score in scores:
+				f.write(f"{score}\n")
